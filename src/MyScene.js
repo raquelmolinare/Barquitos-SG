@@ -3,7 +3,7 @@
 import * as THREE from '../libs/three.module.js';
 import {GUI} from '../libs/dat.gui.module.js';
 import {TrackballControls} from '../libs/TrackballControls.js';
-import {Examen1} from './Examen1.js';
+import {Tablero} from './Tablero.js';
 
 
 class MyScene extends THREE.Scene {
@@ -31,7 +31,7 @@ class MyScene extends THREE.Scene {
 
 
         // Ejercicio 11
-        this.model = new Examen1(this.gui);
+        this.model = new Tablero();
         this.add(this.model);
     }
 
