@@ -4,7 +4,7 @@ import * as THREE from '../libs/three.module.js';
 import {GUI} from '../libs/dat.gui.module.js';
 import {TrackballControls} from '../libs/TrackballControls.js';
 import {Tablero} from './Tablero.js';
-
+import { Jugador } from './Jugador.js';
 
 class MyScene extends THREE.Scene {
     constructor(myCanvas) {
@@ -28,11 +28,19 @@ class MyScene extends THREE.Scene {
         // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
         this.axis = new THREE.AxesHelper(15);
         this.add(this.axis);
-
-
+        this.jugadores = [];
+        this.cargarNombre()
         // Ejercicio 11
         this.model = new Tablero();
         this.add(this.model);
+    }
+
+    cargarNombre() {
+        let person1 = prompt("Nombre jugador 1", "");
+        this.jugadores.push(new Jugador(person1));
+        let person2 = prompt("Nombre jugador 2", "");
+        this.jugadores.push(new Jugador(person2));
+        console.log(this.jugadores)
     }
 
     createCamera() {
@@ -163,6 +171,10 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
+    onMouseDown (event) {
+        alert('algo')
+    }
+
     update() {
         // Se actualizan los elementos de la escena para cada frame
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario en la gui
@@ -196,7 +208,7 @@ $(function () {
 
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
     window.addEventListener("resize", () => scene.onWindowResize());
-
+    window.addEventListener ("mousedown", (event) => scene.onMouseDown(event), true);
     // Que no se nos olvide, la primera visualización.
     scene.update();
 });

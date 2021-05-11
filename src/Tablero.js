@@ -1,13 +1,11 @@
 import * as THREE from '../libs/three.module.js';
-import TWEEN from "../libs/tween.esm.js";
-import {ThreeBSP} from "../libs/ThreeBSP.js";
 
 export class Tablero extends THREE.Object3D {
     constructor() {
         super();
         this.FILAS = 10;
         this.COLS = 8;
-        this.lista = [];
+        this.raycaster = new THREE.Raycaster();
         let matCuadrados = new THREE.MeshNormalMaterial({transparent: true, opacity: 0.7});
 
         let lado = 5;
@@ -36,7 +34,20 @@ export class Tablero extends THREE.Object3D {
         this.add(this.tablero);
 
     }
-
+    onDocumentMouseDown(e) {
+        alert('hola')
+    }
+    /**
+     * It returns the position of the mouse in normalized coordinates ([-1,1],[-1,1])
+     * @param event - Mouse information
+     * @return A Vector2 with the normalized mouse position
+     */
+    getMouse(event) {
+        var mouse = new THREE.Vector2 ();
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
+        return mouse;
+    }
 
     update() {
 
