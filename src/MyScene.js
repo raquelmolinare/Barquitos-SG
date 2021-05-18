@@ -6,9 +6,15 @@ import {TrackballControls} from '../libs/TrackballControls.js';
 import {Tablero} from './Tablero.js';
 import { Jugador } from './Jugador.js';
 
+import {Box} from './Box.js';
 class MyScene extends THREE.Scene {
     constructor(myCanvas) {
         super();
+
+        // Attributes
+        this.applicationMode = MyScene.NO_ACTION;
+        this.mouseDown = false;
+        this.cameraControl = null;
 
         // Lo primero, crear el visualizador, pasándole el lienzo sobre el que realizar los renderizados.
         this.renderer = this.createRenderer(myCanvas);
@@ -29,13 +35,14 @@ class MyScene extends THREE.Scene {
         this.axis = new THREE.AxesHelper(15);
         this.add(this.axis);
         this.jugadores = [];
-        this.cargarNombre()
-        // Ejercicio 11
-        this.model = new Tablero();
-        this.add(this.model);
+        //this.cargarNombres()
+
+        // Tablero
+        this.tablero = new Tablero();
+        this.add(this.tablero);
     }
 
-    cargarNombre() {
+    cargarNombres() {
         let person1 = prompt("Nombre jugador 1", "");
         this.jugadores.push(new Jugador(person1));
         let person2 = prompt("Nombre jugador 2", "");
@@ -64,6 +71,7 @@ class MyScene extends THREE.Scene {
         this.cameraControl.panSpeed = 0.5;
         // Debe orbitar con respecto al punto de mira de la cámara
         this.cameraControl.target = look;
+        this.cameraControl.enabled = false;
     }
 
     createGround() {
@@ -154,6 +162,10 @@ class MyScene extends THREE.Scene {
         return this.camera;
     }
 
+    getCameraControls(){
+        return this.cameraControl;
+    }
+
     setCameraAspect(ratio) {
         // Cada vez que el usuario modifica el tamaño de la ventana desde el gestor de ventanas de
         // su sistema operativo hay que actualizar el ratio de aspecto de la cámara
@@ -171,10 +183,6 @@ class MyScene extends THREE.Scene {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    onMouseDown (event) {
-        alert('algo')
-    }
-
     update() {
         // Se actualizan los elementos de la escena para cada frame
         // Se actualiza la intensidad de la luz con lo que haya indicado el usuario en la gui
@@ -187,7 +195,7 @@ class MyScene extends THREE.Scene {
         this.cameraControl.update();
 
         // Se actualiza el resto del modelo
-        this.model.update();
+        this.tablero.update();
 
 
         // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
@@ -198,7 +206,103 @@ class MyScene extends THREE.Scene {
         // Si no existiera esta línea,  update()  se ejecutaría solo la primera vez.
         requestAnimationFrame(() => this.update())
     }
+
+
+    //---------INTERACCIÓN RATON/TECLADO--------------------------
+
+    onMouseDown (event) {
+        console.log( "funciona1" );
+        if (event.button === 0) {   // Left button
+            this.mouseDown = true;
+            console.log( "funciona2" );
+            //Saber en qué píxel se ha hecho clic
+            //Lanzar un rayo Desde la cámara que pase por dicho píxel
+            //Obtener los objetos alcanzados por ese rayoNormalmente el seleccionado es el más cercano
+            var mouse =new THREE.Vector2() ;
+            mouse.x = (event.clientX/window.innerWidth)*2 - 1 ;
+            mouse.y = 1-2*(event.clientY/window.innerHeight);
+
+            var raycaster = new THREE.Raycaster() ;
+            raycaster.setFromCamera(mouse,this.camera);
+
+
+            var pickableObjects = [];
+
+            //Se añaden las cajas del tablero
+            var i = 0;
+
+            for(i; i < this.tablero.boxesArray.length; i++){
+                pickableObjects.push(this.tablero.boxesArray[i]);
+            }
+
+            this.pickedObjects = raycaster.intersectObjects(pickableObjects,true);
+
+
+            if(this.pickedObjects.length > 0){
+                this.selectedObject = this.pickedObjects[0].object;
+
+                let parar = false;
+                for(i = 0; i < this.tablero.boxesArray.length && !parar; i++){
+                    if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                        this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                        this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
+                        this.foundBox.cambiarMaterial();
+                        console.log("estoy en if")
+                        parar = true;
+                    }
+                }
+                /*
+                let boxGeometry = new THREE.BoxGeometry(3,3,3);
+                let boxMaterial = new THREE.MeshPhongMaterial({color: 0xCF0000});
+
+                let boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+                boxMesh.position.x = this.selectedObject.x;
+                boxMesh.position.y = this.selectedObject.y;
+                boxMesh.position.z = this.selectedObject.z;
+
+                this.add(boxMesh);*/
+            }
+        } else {
+            this.applicationMode = MyScene.NO_ACTION;
+        }
+    }
+
+    onMouseUp (event) {
+        if (this.mouseDown) {
+            this.mouseDown = false;
+        }
+    }
+
+
+    onMouseWheel (event) {
+        if (event.ctrlKey) {
+            // The Trackballcontrol only works if Ctrl key is pressed
+            this.getCameraControls().enabled = true;
+        } else {
+            this.getCameraControls().enabled = false;
+        }
+    }
+
+    onKeyDown (event) {
+        var x = event.which || event.keyCode;
+        switch (x) {
+            case 17 : // Ctrl key
+                this.getCameraControls().enabled = true;
+        }
+        //console.log( "hola1" );
+    }
+
+    onKeyUp (event) {
+        var x = event.which || event.keyCode;
+        switch (x) {
+            case 17 : // Ctrl key
+                this.getCameraControls().enabled = false;
+        }
+    }
 }
+
+// Application modes
+MyScene.NO_ACTION = 0;
 
 /// La función   main
 $(function () {
@@ -209,6 +313,9 @@ $(function () {
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
     window.addEventListener("resize", () => scene.onWindowResize());
     window.addEventListener ("mousedown", (event) => scene.onMouseDown(event), true);
+    window.addEventListener ("mousewheel", (event) => scene.onMouseWheel(event), true);   // For Chrome an others
+    window.addEventListener ("keydown", (event) => scene.onKeyDown (event), true);
+    window.addEventListener ("keyup", (event) => scene.onKeyUp(event), true);
     // Que no se nos olvide, la primera visualización.
     scene.update();
 });

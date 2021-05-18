@@ -1,5 +1,6 @@
 import * as THREE from '../libs/three.module.js';
 
+import {Box} from './Box.js';
 export class Tablero extends THREE.Object3D {
     constructor() {
         super();
@@ -12,20 +13,27 @@ export class Tablero extends THREE.Object3D {
 
         this.tablero = new THREE.Object3D();
 
+        //Se guardan las cajas
+        this.boxesArray = [];
+
 
         for (let i = 0; i < this.FILAS; i++) {
             for (let j = 0; j < this.COLS; j++) {
 
-                let posicion = new THREE.Vector3(lado / 2 + lado * j, lado / 2 + lado * i, 0);
+                //let posicion = new THREE.Vector3(lado / 2 + lado * j, lado / 2 + lado * i, 0);
 
-                let box = new THREE.Mesh(new THREE.BoxGeometry(lado, lado, lado), matCuadrados);
+                //let box = new THREE.Mesh(new THREE.BoxGeometry(lado, lado, lado), matCuadrados);
+                let box = new Box(lado,lado / 2 + lado * j,lado / 2 + lado * i,0 );
+
                 //situarlo en el tablero
-                box.position.set(posicion.x, posicion.y, posicion.z);
-                let geo = new THREE.EdgesGeometry(box.geometry);
-                let mat = new THREE.LineBasicMaterial({color: 0x0001110, linewidth: 6});
-                let wireframe = new THREE.LineSegments(geo, mat);
-                wireframe.renderOrder = 1; // make sure wireframes are rendered 2nd
-                box.add(wireframe);
+                //box.position.set(posicion.x, posicion.y, posicion.z);
+                //let geo = new THREE.EdgesGeometry(box.geometry);
+                //let mat = new THREE.LineBasicMaterial({color: 0x0001110, linewidth: 6});
+                //let wireframe = new THREE.LineSegments(geo, mat);
+                //wireframe.renderOrder = 1; // make sure wireframes are rendered 2nd
+                //box.add(wireframe);
+
+                this.boxesArray.push(box);
                 this.tablero.add(box);
 
             }
@@ -34,6 +42,7 @@ export class Tablero extends THREE.Object3D {
         this.add(this.tablero);
 
     }
+    /*
     onDocumentMouseDown(e) {
         alert('hola')
     }
