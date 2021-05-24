@@ -106,7 +106,14 @@ class MyScene extends THREE.Scene {
             // En el contexto de una función   this   alude a la función
             this.lightIntensity = 0.5;
             this.axisOnOff = true;
+            this.new_ship2 = false;
+            this.new_ship3 = false;
+            this.new_ship4 = false;
+            this.new_ship5 = false;
+            this.new_ship6 = false;
         }
+
+        var that = this;
 
         // Se crea una sección para los controles de esta clase
         var folder = gui.addFolder('Luz y Ejes');
@@ -116,6 +123,56 @@ class MyScene extends THREE.Scene {
 
         // Y otro para mostrar u ocultar los ejes
         folder.add(this.guiControls, 'axisOnOff').name('Mostrar ejes : ');
+
+        //
+        gui.add(this.guiControls, 'new_ship2').name('Añadir barco 1 : ').listen().onChange( function(new_ship2){
+            MyScene.NEW_SHIP=2;
+            console.log( MyScene.NEW_SHIP );
+            that.new_ship3 = false;
+            that.new_ship4 = false;
+            that.new_ship5 = false;
+            that.new_ship6 = false;
+        });
+
+        //
+        gui.add(this.guiControls, 'new_ship3').name('Añadir barco 2 : ').listen().onChange( function(new_ship3){
+            MyScene.NEW_SHIP=3;
+            console.log( MyScene.NEW_SHIP );
+            that.new_ship2 = false;
+            that.new_ship4 = false;
+            that.new_ship5 = false;
+            that.new_ship6 = false;
+        });
+
+        //
+        gui.add(this.guiControls, 'new_ship4').name('Añadir barco 3 : ').listen().onChange( function(new_ship4){
+            MyScene.NEW_SHIP=4;
+            console.log( MyScene.NEW_SHIP );
+            that.new_ship2 = false;
+            that.new_ship3 = false;
+            that.new_ship5 = false;
+            that.new_ship6 = false;
+        });
+
+        //
+        gui.add(this.guiControls, 'new_ship5').name('Añadir barco 4 : ').listen().onChange( function(new_ship5){
+            MyScene.NEW_SHIP=5;
+            console.log( MyScene.NEW_SHIP );
+            that.new_ship2 = false;
+            that.new_ship3 = false;
+            that.new_ship4 = false;
+            that.new_ship6 = false;
+        });
+
+        //
+        gui.add(this.guiControls, 'new_ship6').name('Añadir barco 5 : ').listen().onChange( function(new_ship6){
+            MyScene.NEW_SHIP=6;
+            console.log( MyScene.NEW_SHIP );
+            that.new_ship2 = false;
+            that.new_ship3 = false;
+            that.new_ship4 = false;
+            that.new_ship5 = false;
+        });
 
         return gui;
     }
@@ -211,13 +268,106 @@ class MyScene extends THREE.Scene {
     //---------INTERACCIÓN RATON/TECLADO--------------------------
 
     onMouseDown (event) {
-        console.log( "funciona1" );
+        //console.log( "funciona1" );
         if (event.button === 0) {   // Left button
-            this.mouseDown = true;
-            console.log( "funciona2" );
-            //Saber en qué píxel se ha hecho clic
-            //Lanzar un rayo Desde la cámara que pase por dicho píxel
-            //Obtener los objetos alcanzados por ese rayoNormalmente el seleccionado es el más cercano
+
+            if(MyScene.NEW_SHIP > 0){
+                this.mouseDown = true;
+                //console.log( "funciona2" );
+                //Saber en qué píxel se ha hecho clic
+                //Lanzar un rayo Desde la cámara que pase por dicho píxel
+                //Obtener los objetos alcanzados por ese rayoNormalmente el seleccionado es el más cercano
+                var mouse =new THREE.Vector2() ;
+                mouse.x = (event.clientX/window.innerWidth)*2 - 1 ;
+                mouse.y = 1-2*(event.clientY/window.innerHeight);
+
+                var raycaster = new THREE.Raycaster() ;
+                raycaster.setFromCamera(mouse,this.camera);
+
+
+                var pickableObjects = [];
+
+                //Se añaden las cajas del tablero
+                var i = 0;
+
+                for(i; i < this.tablero.boxesArray.length; i++){
+                    pickableObjects.push(this.tablero.boxesArray[i]);
+                }
+
+                this.pickedObjects = raycaster.intersectObjects(pickableObjects,true);
+
+
+                if(this.pickedObjects.length > 0){
+                    this.selectedObject = this.pickedObjects[0].object;
+
+                    let parar = false;
+                    for(i = 0; i < this.tablero.boxesArray.length && !parar; i++){
+                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                            this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
+
+                            if( MyScene.HORIZONTAL ){
+                                console.log(MyScene.NEW_SHIP);
+                                this.tablero.selectX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                                //this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                            }
+                            else{
+                                console.log(MyScene.NEW_SHIP);
+                                this.tablero.selectY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                                //this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                            }
+
+                            /*
+                            if( !this.foundBox.seleccionado ){
+                                this.foundBox.select();
+                            }
+                            else{
+                                this.foundBox.deselect();
+                            }
+                            */
+                            //this.foundBox.cambiarMaterial();
+                            //console.log("estoy en if")
+                            parar = true;
+                        }
+                    }
+                    /*
+                    let boxGeometry = new THREE.BoxGeometry(3,3,3);
+                    let boxMaterial = new THREE.MeshPhongMaterial({color: 0xCF0000});
+
+                    let boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
+                    boxMesh.position.x = this.selectedObject.x;
+                    boxMesh.position.y = this.selectedObject.y;
+                    boxMesh.position.z = this.selectedObject.z;
+
+                    this.add(boxMesh);*/
+                }
+            }
+
+        } else {
+            this.applicationMode = MyScene.NO_ACTION;
+        }
+    }
+
+    onMouseUp (event) {
+        if (this.mouseDown) {
+            this.mouseDown = false;
+        }
+    }
+
+    onMouseMove (event) {
+        if (this.mouseDown) {
+            /*
+            switch (this.applicationMode) {
+                case TheScene.ADDING_BOXES :
+                case TheScene.MOVING_BOXES :
+                    this.moveBox (event, TheScene.MOVE_BOX);
+                    break;
+                default :
+                    this.applicationMode = TheScene.NO_ACTION;
+                    break;
+            }*/
+        }
+        else{
             var mouse =new THREE.Vector2() ;
             mouse.x = (event.clientX/window.innerWidth)*2 - 1 ;
             mouse.y = 1-2*(event.clientY/window.innerHeight);
@@ -241,38 +391,25 @@ class MyScene extends THREE.Scene {
             if(this.pickedObjects.length > 0){
                 this.selectedObject = this.pickedObjects[0].object;
 
-                let parar = false;
-                for(i = 0; i < this.tablero.boxesArray.length && !parar; i++){
+                for(i = 0; i < this.tablero.boxesArray.length; i++){
                     if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
                         this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                         this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
-                        this.foundBox.cambiarMaterial();
-                        console.log("estoy en if")
-                        parar = true;
+
+                        if( MyScene.HORIZONTAL ){
+                            this.tablero.overX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                            this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                        }
+                        else{
+                            this.tablero.overY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                            this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                        }
+
                     }
                 }
-                /*
-                let boxGeometry = new THREE.BoxGeometry(3,3,3);
-                let boxMaterial = new THREE.MeshPhongMaterial({color: 0xCF0000});
-
-                let boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-                boxMesh.position.x = this.selectedObject.x;
-                boxMesh.position.y = this.selectedObject.y;
-                boxMesh.position.z = this.selectedObject.z;
-
-                this.add(boxMesh);*/
             }
-        } else {
-            this.applicationMode = MyScene.NO_ACTION;
         }
     }
-
-    onMouseUp (event) {
-        if (this.mouseDown) {
-            this.mouseDown = false;
-        }
-    }
-
 
     onMouseWheel (event) {
         if (event.ctrlKey) {
@@ -288,6 +425,16 @@ class MyScene extends THREE.Scene {
         switch (x) {
             case 17 : // Ctrl key
                 this.getCameraControls().enabled = true;
+                break;
+            case 9 : // Tab key
+                if(MyScene.HORIZONTAL == 0){
+                    MyScene.HORIZONTAL=1;
+                }
+                else{
+                    MyScene.HORIZONTAL=0;
+                }
+
+                break;
         }
         //console.log( "hola1" );
     }
@@ -297,12 +444,15 @@ class MyScene extends THREE.Scene {
         switch (x) {
             case 17 : // Ctrl key
                 this.getCameraControls().enabled = false;
+                break;
         }
     }
 }
 
 // Application modes
 MyScene.NO_ACTION = 0;
+MyScene.NEW_SHIP = 0;
+MyScene.HORIZONTAL = 1;
 
 /// La función   main
 $(function () {
@@ -313,7 +463,9 @@ $(function () {
     // Se añaden los listener de la aplicación. En este caso, el que va a comprobar cuándo se modifica el tamaño de la ventana de la aplicación.
     window.addEventListener("resize", () => scene.onWindowResize());
     window.addEventListener ("mousedown", (event) => scene.onMouseDown(event), true);
+    window.addEventListener ("mouseup", (event) => scene.onMouseUp(event), true);
     window.addEventListener ("mousewheel", (event) => scene.onMouseWheel(event), true);   // For Chrome an others
+    window.addEventListener ("mousemove", (event) => scene.onMouseMove(event), true);
     window.addEventListener ("keydown", (event) => scene.onKeyDown (event), true);
     window.addEventListener ("keyup", (event) => scene.onKeyUp(event), true);
     // Que no se nos olvide, la primera visualización.
