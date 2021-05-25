@@ -5,14 +5,15 @@ import {GUI} from '../libs/dat.gui.module.js';
 import {TrackballControls} from '../libs/TrackballControls.js';
 import {Tablero} from './Tablero.js';
 import { Jugador } from './Jugador.js';
-
+import {actions} from './params.js';
 import {Box} from './Box.js';
+
 class MyScene extends THREE.Scene {
     constructor(myCanvas) {
         super();
 
         // Attributes
-        this.applicationMode = MyScene.NO_ACTION;
+        this.applicationMode = actions.NO_ACTION;
         this.mouseDown = false;
         this.cameraControl = null;
 
@@ -57,9 +58,9 @@ class MyScene extends THREE.Scene {
         //   Los planos de recorte cercano y lejano
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         // También se indica dónde se coloca
-        this.camera.position.set(20, 10, 20);
+        this.camera.position.set(20, 10, 150);
         // Y hacia dónde mira
-        var look = new THREE.Vector3(0, 0, 0);
+        var look = new THREE.Vector3(10, 30, 0);
         this.camera.lookAt(look);
         this.add(this.camera);
 
@@ -96,21 +97,11 @@ class MyScene extends THREE.Scene {
     }
 
     createGUI() {
-        // Se crea la interfaz gráfica de usuario
         var gui = new GUI();
 
-        // La escena le va a añadir sus propios controles.
-        // Se definen mediante una   new function()
-        // En este caso la intensidad de la luz y si se muestran o no los ejes
         this.guiControls = new function () {
-            // En el contexto de una función   this   alude a la función
             this.lightIntensity = 0.5;
             this.axisOnOff = true;
-            this.new_ship2 = false;
-            this.new_ship3 = false;
-            this.new_ship4 = false;
-            this.new_ship5 = false;
-            this.new_ship6 = false;
         }
 
         var that = this;
@@ -123,56 +114,6 @@ class MyScene extends THREE.Scene {
 
         // Y otro para mostrar u ocultar los ejes
         folder.add(this.guiControls, 'axisOnOff').name('Mostrar ejes : ');
-
-        //
-        gui.add(this.guiControls, 'new_ship2').name('Añadir barco 1 : ').listen().onChange( function(new_ship2){
-            MyScene.NEW_SHIP=2;
-            console.log( MyScene.NEW_SHIP );
-            that.new_ship3 = false;
-            that.new_ship4 = false;
-            that.new_ship5 = false;
-            that.new_ship6 = false;
-        });
-
-        //
-        gui.add(this.guiControls, 'new_ship3').name('Añadir barco 2 : ').listen().onChange( function(new_ship3){
-            MyScene.NEW_SHIP=3;
-            console.log( MyScene.NEW_SHIP );
-            that.new_ship2 = false;
-            that.new_ship4 = false;
-            that.new_ship5 = false;
-            that.new_ship6 = false;
-        });
-
-        //
-        gui.add(this.guiControls, 'new_ship4').name('Añadir barco 3 : ').listen().onChange( function(new_ship4){
-            MyScene.NEW_SHIP=4;
-            console.log( MyScene.NEW_SHIP );
-            that.new_ship2 = false;
-            that.new_ship3 = false;
-            that.new_ship5 = false;
-            that.new_ship6 = false;
-        });
-
-        //
-        gui.add(this.guiControls, 'new_ship5').name('Añadir barco 4 : ').listen().onChange( function(new_ship5){
-            MyScene.NEW_SHIP=5;
-            console.log( MyScene.NEW_SHIP );
-            that.new_ship2 = false;
-            that.new_ship3 = false;
-            that.new_ship4 = false;
-            that.new_ship6 = false;
-        });
-
-        //
-        gui.add(this.guiControls, 'new_ship6').name('Añadir barco 5 : ').listen().onChange( function(new_ship6){
-            MyScene.NEW_SHIP=6;
-            console.log( MyScene.NEW_SHIP );
-            that.new_ship2 = false;
-            that.new_ship3 = false;
-            that.new_ship4 = false;
-            that.new_ship5 = false;
-        });
 
         return gui;
     }
@@ -271,7 +212,7 @@ class MyScene extends THREE.Scene {
         //console.log( "funciona1" );
         if (event.button === 0) {   // Left button
 
-            if(MyScene.NEW_SHIP > 0){
+            if(actions.NEW_SHIP){
                 this.mouseDown = true;
                 //console.log( "funciona2" );
                 //Saber en qué píxel se ha hecho clic
@@ -301,50 +242,31 @@ class MyScene extends THREE.Scene {
                     this.selectedObject = this.pickedObjects[0].object;
 
                     let parar = false;
-                    for(i = 0; i < this.tablero.boxesArray.length && !parar; i++){
+                    for(i = 0; i < this.tablero.boxesArray.length && !parar; i++) {
                         if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
                             this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                             this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
 
-                            if( MyScene.HORIZONTAL ){
-                                console.log(MyScene.NEW_SHIP);
-                                this.tablero.selectX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
-                                //this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                            if( actions.IS_HORIZONTAL ) {
+                                console.log(actions.N_BARCOS);
+                                let bien = this.tablero.selectX(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
+                                if (bien) {
+                                    actions.N_BARCOS <= actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
+                                }
+                            } else {
+                                let bien = this.tablero.selectY(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
+                                if (bien) {
+                                    actions.N_BARCOS <= actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
+                                }
                             }
-                            else{
-                                console.log(MyScene.NEW_SHIP);
-                                this.tablero.selectY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
-                                //this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
-                            }
-
-                            /*
-                            if( !this.foundBox.seleccionado ){
-                                this.foundBox.select();
-                            }
-                            else{
-                                this.foundBox.deselect();
-                            }
-                            */
-                            //this.foundBox.cambiarMaterial();
-                            //console.log("estoy en if")
                             parar = true;
                         }
                     }
-                    /*
-                    let boxGeometry = new THREE.BoxGeometry(3,3,3);
-                    let boxMaterial = new THREE.MeshPhongMaterial({color: 0xCF0000});
-
-                    let boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
-                    boxMesh.position.x = this.selectedObject.x;
-                    boxMesh.position.y = this.selectedObject.y;
-                    boxMesh.position.z = this.selectedObject.z;
-
-                    this.add(boxMesh);*/
                 }
             }
 
         } else {
-            this.applicationMode = MyScene.NO_ACTION;
+            this.applicationMode = actions.NO_ACTION;
         }
     }
 
@@ -396,13 +318,13 @@ class MyScene extends THREE.Scene {
                         this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                         this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
 
-                        if( MyScene.HORIZONTAL ){
-                            this.tablero.overX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
-                            this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                        if( actions.IS_HORIZONTAL ){
+                            this.tablero.overX(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
+                            this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
                         }
                         else{
-                            this.tablero.overY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
-                            this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna,MyScene.NEW_SHIP);
+                            this.tablero.overY(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
+                            this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
                         }
 
                     }
@@ -427,11 +349,11 @@ class MyScene extends THREE.Scene {
                 this.getCameraControls().enabled = true;
                 break;
             case 9 : // Tab key
-                if(MyScene.HORIZONTAL == 0){
-                    MyScene.HORIZONTAL=1;
+                if(actions.IS_HORIZONTAL == 0){
+                    actions.IS_HORIZONTAL=1;
                 }
                 else{
-                    MyScene.HORIZONTAL=0;
+                    actions.IS_HORIZONTAL=0;
                 }
 
                 break;
@@ -449,10 +371,6 @@ class MyScene extends THREE.Scene {
     }
 }
 
-// Application modes
-MyScene.NO_ACTION = 0;
-MyScene.NEW_SHIP = 0;
-MyScene.HORIZONTAL = 1;
 
 /// La función   main
 $(function () {

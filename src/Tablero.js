@@ -1,6 +1,11 @@
 import * as THREE from '../libs/three.module.js';
-
 import {Box} from './Box.js';
+import {BarcoPescador} from "./barcos/BarcoPescador.js";
+import {BarcoBote} from "./barcos/BarcoBote.js";
+import {Submarino} from "./barcos/Submarino.js";
+import {BarcoGuerra} from "./barcos/BarcoGuerra.js";
+import {BarcoPirata} from "./barcos/BarcoPirata.js";
+
 export class Tablero extends THREE.Object3D {
     constructor() {
         super();
@@ -9,21 +14,22 @@ export class Tablero extends THREE.Object3D {
         this.raycaster = new THREE.Raycaster();
         let matCuadrados = new THREE.MeshNormalMaterial({transparent: true, opacity: 0.7});
 
-        let lado = 5;
+        this.lado = 5;
 
         this.tablero = new THREE.Object3D();
 
         //Se guardan las cajas
         this.boxesArray = [];
 
+        this.construirBarcos();
 
         for (let i = 0; i < this.FILAS; i++) {
             for (let j = 0; j < this.COLS; j++) {
 
-                //let posicion = new THREE.Vector3(lado / 2 + lado * j, lado / 2 + lado * i, 0);
+                //let posicion = new THREE.Vector3(this.lado / 2 + this.lado * j, this.lado / 2 + this.lado * i, 0);
 
-                //let box = new THREE.Mesh(new THREE.BoxGeometry(lado, lado, lado), matCuadrados);
-                let box = new Box(lado,lado / 2 + lado * j,lado / 2 + lado * i,0 ,i,j);
+                //let box = new THREE.Mesh(new THREE.BoxGeometry(this.lado, this.lado, this.lado), matCuadrados);
+                let box = new Box(this.lado,this.lado / 2 + this.lado * j,this.lado / 2 + this.lado * i,0 ,i,j);
 
                 //situarlo en el tablero
                 //box.position.set(posicion.x, posicion.y, posicion.z);
@@ -40,6 +46,16 @@ export class Tablero extends THREE.Object3D {
         }
 
         this.add(this.tablero);
+
+    }
+
+    async construirBarcos() {
+        this.barcos = [];
+        this.barcos.push(new BarcoBote(this.lado));
+        this.barcos.push(new BarcoPescador(this.lado));
+        this.barcos.push(new Submarino(this.lado));
+        this.barcos.push(new BarcoGuerra(this.lado));
+        this.barcos.push(new BarcoPirata(this.lado));
 
     }
 
@@ -98,7 +114,7 @@ export class Tablero extends THREE.Object3D {
         }
     }
 
-    overY(f,c,n){
+    overY(f, c, n){
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
 
         if(f+n > this.FILAS ){
@@ -157,9 +173,9 @@ export class Tablero extends THREE.Object3D {
     }
 
 
-    selectX(f,c,n){
+    selectX(f,c,n) {
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
-
+        let salida = false;
         //Mirar si se pueden seleccionar
         var seleccionables=true;
 
@@ -179,16 +195,20 @@ export class Tablero extends THREE.Object3D {
         //2. Mirar si se salen del tablero y si no seleccionar
         if( seleccionables ){
             for(let i = 0; i < n; i++) {
-                //console.log("compruebo: f="+f+" c="+(c+i))
                 this.boxesArray[(f * this.COLS) + c + i].select();
             }
+            this.barcos[n - 2].position.x += c * this.lado;
+            this.barcos[n - 2].position.y += f * this.lado;
+            this.add(this.barcos[n - 2]);
+            salida = true;
         }
-
+        return salida;
     }
 
-    selectY(f,c,n){
-        //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
 
+    selectY(f, c, n){
+        //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
+        let salida = false;
         //Mirar si se pueden seleccionar
         var seleccionables=true;
 
@@ -206,12 +226,20 @@ export class Tablero extends THREE.Object3D {
         }
 
         //3. seleccionar
-        if(seleccionables){
+        if(seleccionables) {
             for(let i = 0; i < n; i++) {
                 //console.log("compruebo: f="+(f+i)+" c="+c)
                 this.boxesArray[( (f+i) * this.COLS) + c].select();
             }
+
+            this.barcos[n - 2].position.x += ( c + 1 ) * this.lado;
+            this.barcos[n - 2].position.y += f * this.lado;
+            this.barcos[n - 2].rotation.z += Math.PI / 2;
+            this.add(this.barcos[n - 2]);
+            salida = true;
         }
+
+        return salida;
     }
 
 

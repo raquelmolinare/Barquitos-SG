@@ -1,17 +1,17 @@
 
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 
 //Imports para los modelos
-import { MTLLoader } from '../libs/MTLLoader.js'
-import { OBJLoader } from '../libs/OBJLoader.js'
-import {GLTFLoader} from '../libs/GLTFLoader.js'
+import { MTLLoader } from '../../libs/MTLLoader.js'
+import { OBJLoader } from '../../libs/OBJLoader.js'
+import {GLTFLoader} from '../../libs/GLTFLoader.js'
 
 //Imports para la animacion
-import * as TWEEN from '../libs/tween.esm.js'
-import {Object3D} from "../libs/three.module.js";
+import * as TWEEN from '../../libs/tween.esm.js'
+import {Object3D} from "../../libs/three.module.js";
 
 class BarcoGuerra extends THREE.Object3D {
-  constructor() {
+  constructor(lado) {
     super();
 
       var that = this;
@@ -36,11 +36,12 @@ class BarcoGuerra extends THREE.Object3D {
       );
 
       //Posicionar
-      nodo.scale.set(0.6,0.47,0.47);
-      nodo.rotation.y=-Math.PI/2;
-      nodo.position.x=-0.6;
-      nodo.position.y=0.6;
-      nodo.position.z=0.1;
+      nodo.scale.set(0.6* lado,0.47 * lado,0.47 * lado);
+      nodo.rotation.y = -Math.PI/2;
+      nodo.rotation.x = Math.PI/2;
+      nodo.position.x = lado * 2;
+      nodo.position.y = 2.65;
+      nodo.position.z = lado -1;
 
 
       this.add(nodo);

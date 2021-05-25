@@ -1,17 +1,17 @@
 
-import * as THREE from '../libs/three.module.js'
+import * as THREE from '../../libs/three.module.js'
 
 //Imports para los modelos
-import { MTLLoader } from '../libs/MTLLoader.js'
-import { OBJLoader } from '../libs/OBJLoader.js'
-import {GLTFLoader} from '../libs/GLTFLoader.js'
+import { MTLLoader } from '../../libs/MTLLoader.js'
+import { OBJLoader } from '../../libs/OBJLoader.js'
+import {GLTFLoader} from '../../libs/GLTFLoader.js'
 
 //Imports para la animacion
-import * as TWEEN from '../libs/tween.esm.js'
-import {Object3D} from "../libs/three.module.js";
+import * as TWEEN from '../../libs/tween.esm.js'
+import {Object3D} from "../../libs/three.module.js";
 
 class BarcoBote extends THREE.Object3D {
-    constructor() {
+    constructor(lado) {
         super();
 
         var that = this;
@@ -36,12 +36,13 @@ class BarcoBote extends THREE.Object3D {
         );
 
         //Posicionar
-        nodo.scale.set(0.24,0.3,0.3);
-        nodo.position.x+=0.05;
-        nodo.position.y+=0.5;
+        nodo.scale.set(0.24 * lado,0.3 * lado,0.3 * lado);
+        nodo.rotation.x = Math.PI / 2;
+        nodo.position.x = lado / 2 + 2.3;
+        nodo.position.z = lado / 2;
+        nodo.position.y += lado / 2;
 
         this.add(nodo);
-
     }
 
     update() {

@@ -16,11 +16,11 @@ import { TrackballControls } from '../libs/TrackballControls.js'
 
 import { Box } from './Box.js'
 
-import { BarcoPescador } from './BarcoPescador.js'
-import { Submarino } from './Submarino.js'
-import { BarcoGuerra } from './BarcoGuerra.js'
-import {BarcoPirata} from "./BarcoPirata.js";
-import {BarcoBote} from "./BarcoBote.js";
+import { BarcoPescador } from '../src/barcos/BarcoPescador.js'
+import { Submarino } from '../src/barcos/Submarino.js'
+import { BarcoGuerra } from '../src/barcos/BarcoGuerra.js'
+import {BarcoPirata} from "../src/barcos/BarcoPirata.js";
+import {BarcoBote} from "../src/barcos/BarcoBote.js";
 
 /// La clase fachada del modelo
 /**
