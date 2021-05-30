@@ -19,15 +19,16 @@ class BarcoBote extends THREE.Object3D {
         var materialLoader = new MTLLoader();
         var objectLoader = new OBJLoader();
 
-        var nodo = new Object3D();
+        this.nodo = new Object3D();
         var modelo;
+
         materialLoader.load( '../models/barco_bote/materiales.mtl',
             function (materials){
                 objectLoader.setMaterials(materials);
                 objectLoader.load( '../models/barco_bote/modelo.obj',
                     function(object){
                         modelo = object;
-                        nodo.add(modelo);
+                        that.nodo.add(modelo);
                     },
                     null,
                     null
@@ -36,18 +37,19 @@ class BarcoBote extends THREE.Object3D {
         );
 
         //Posicionar
-        nodo.scale.set(0.24 * lado,0.3 * lado,0.3 * lado);
-        nodo.rotation.x = Math.PI / 2;
-        nodo.position.x = lado / 2 + 2.3;
-        nodo.position.z = lado / 2;
-        nodo.position.y += lado / 2;
-
-        this.add(nodo);
+        this.nodo.scale.set(0.24 * lado,0.3 * lado,0.3 * lado);
+        this.nodo.rotation.x = Math.PI / 2;
+        this.nodo.position.x = lado / 2 + 2.3;
+        this.nodo.position.z = lado / 2;
+        this.nodo.position.y += lado / 2;
+        this.lado = lado;
+        this.add(this.nodo);
     }
 
-    update() {
-
+    hundir() {
+        this.nodo.position.z -= this.lado / 2;
     }
+
 
 }
 

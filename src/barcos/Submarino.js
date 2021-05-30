@@ -44,11 +44,12 @@ class Submarino extends THREE.Object3D {
         nodo.position.x = lado + 5;
         nodo.position.y = lado / 2;
         nodo.position.z = lado - 1;
+        this.lado = lado;
         this.add(nodo);
     }
 
-    update() {
-
+    hundir() {
+        this.position.z -= this.lado / 2;
     }
 
 }

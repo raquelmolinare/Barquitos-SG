@@ -14,12 +14,14 @@ export class Box extends THREE.Scene {
         this.overMaterial = new THREE.MeshBasicMaterial({color: 0xffff00});
         this.overRightMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00});
         this.overWrongMaterial = new THREE.MeshBasicMaterial({color: 0xff0000});
+        this.blackMaterial = new THREE.MeshBasicMaterial({color: 0x000000});
 
         //Varibles necesarias
-        this.seleccionado=false;
+        this.tieneBarco=false;
         this.fila=f;
         this.columna=c;
-
+        this.disparado = false;
+        this.barcoContenido = null;
 
         this.boxMesh = new THREE.Mesh(this.boxGeometry, this.boxMaterial);
         this.boxMesh.position.x = pointX;
@@ -39,56 +41,67 @@ export class Box extends THREE.Scene {
         return this.boxMesh.position;
     }
 
+    shoot() {
+        console.log(this.barcoContenido)
+        if(!this.disparado) {
+            this.boxMesh.material = this.blackMaterial;
+            this.boxMesh.material.opacity = this.blackMaterial.opacity;
+            this.disparado = true;
+        }
+    }
+
     rotateBox(event){
         this.boxMesh.rotation.y += (event.wheelDelta ? event.wheelDelta/20 : -event.detail);
     }
 
     cambiarMaterial() {
-        //console.log("cambiar material")
-
-        //let cambio = new THREE.MeshPhongMaterial({color: 0xCF0000});
-        //console.log(cambio)
-        //this.material.flatShading = false;
-        //this.boxMesh.material.needsUpdate = true;
-        //this.boxMesh = new THREE.Mesh(this.boxGeometry,cambio);
-
-        //this.boxMaterial = new THREE.MeshPhongMaterial({color: 0xCF0000});
-        //this.boxMaterial.needsUpdate = true;
-        //this.boxMaterial.flatShading = false;
-        //this.boxMaterial.needsUpdate = true;
-        if( !this.seleccionado ){
+        if( !this.tieneBarco ){
             this.boxMesh.material = new THREE.MeshPhongMaterial({color: 0xCF0000});
             this.boxMesh.material.opacity = 1.0;
         }
-        //console.log(this.boxMaterial);
     }
 
     resetMaterial() {
-        if( !this.seleccionado ) {
+        if( !this.tieneBarco && !this.disparado) {
             this.boxMesh.material = this.defaultMaterial;
             this.boxMesh.material.opacity = this.defaultMaterial.opacity;
-        }
-        else{
-            this.boxMesh.material = this.selectMaterial;
-            this.boxMesh.material.opacity = this.selectMaterial.opacity;
+        } else {
+            if(this.disparado) {
+                this.boxMesh.material = this.blackMaterial;
+                this.boxMesh.material.opacity = this.blackMaterial.opacity;
+            } else {
+                this.boxMesh.material = this.selectMaterial;
+                this.boxMesh.material.opacity = this.selectMaterial.opacity;
+            }
+
         }
     }
 
-    select() {
+    /**
+     * Posiciona y almacena el barco que posee la casilla
+     * @param barco tamaño del barco (num. casillas que ocupa).
+     */
+    posicionarBarco(barco) {
         this.boxMesh.material = this.selectMaterial;
         this.boxMesh.material.opacity = this.selectMaterial.opacity;
-        this.seleccionado = true;
+        this.tieneBarco = true;
+        this.barcoContenido = barco;
     }
 
     deselect() {
         this.boxMesh.material = this.defaultMaterial;
         this.boxMesh.material.opacity = this.defaultMaterial.opacity;
-        this.seleccionado = false;
+        this.tieneBarco = false;
     }
 
     over() {
-        this.boxMesh.material = this.overMaterial;
-        this.boxMesh.material.opacity = this.overMaterial.opacity;
+        if(this.disparado) {
+            this.overWrong();
+        } else {
+            this.boxMesh.material = this.overMaterial;
+            this.boxMesh.material.opacity = this.overMaterial.opacity;
+        }
+
     }
 
     overWrong() {

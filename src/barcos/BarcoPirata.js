@@ -53,14 +53,15 @@ class BarcoPirata extends THREE.Object3D {
         nodo.position.x = -lado/4;
         nodo.position.z = 1.45;
         nodo.position.y = -lado + 0.5;
-
+        this.lado = lado;
         this.add(nodo);
 
     }
 
-    update() {
-
+    hundir() {
+        this.position.z -= this.lado / 2;
     }
+
 
 }
 

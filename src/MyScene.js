@@ -212,7 +212,7 @@ class MyScene extends THREE.Scene {
         //console.log( "funciona1" );
         if (event.button === 0) {   // Left button
 
-            if(actions.NEW_SHIP){
+            if(actions.NEW_SHIP) {
                 this.mouseDown = true;
                 //console.log( "funciona2" );
                 //Saber en qué píxel se ha hecho clic
@@ -249,16 +249,52 @@ class MyScene extends THREE.Scene {
 
                             if( actions.IS_HORIZONTAL ) {
                                 console.log(actions.N_BARCOS);
-                                let bien = this.tablero.selectX(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
+                                let bien = this.tablero.selectXNewShip(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
                                 if (bien) {
-                                    actions.N_BARCOS <= actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
+                                    actions.N_BARCOS < actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
                                 }
                             } else {
-                                let bien = this.tablero.selectY(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
+                                let bien = this.tablero.selectYNewShip(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
                                 if (bien) {
-                                    actions.N_BARCOS <= actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
+                                    actions.N_BARCOS < actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
                                 }
                             }
+                            parar = true;
+                        }
+                    }
+                }
+            } else {
+                // No estamos colocando barcos.
+                var mouse =new THREE.Vector2() ;
+                mouse.x = (event.clientX/window.innerWidth)*2 - 1 ;
+                mouse.y = 1-2*(event.clientY/window.innerHeight);
+
+                var raycaster = new THREE.Raycaster() ;
+                raycaster.setFromCamera(mouse,this.camera);
+
+
+                var pickableObjects = [];
+
+                //Se añaden las cajas del tablero
+                var i = 0;
+
+                for(i; i < this.tablero.boxesArray.length; i++){
+                    pickableObjects.push(this.tablero.boxesArray[i]);
+                }
+
+                this.pickedObjects = raycaster.intersectObjects(pickableObjects,true);
+
+
+                if(this.pickedObjects.length > 0) {
+                    this.selectedObject = this.pickedObjects[0].object;
+                    let parar = false;
+                    for(i = 0; i < this.tablero.boxesArray.length && !parar; i++) {
+                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                            this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
+
+                            this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
+
                             parar = true;
                         }
                     }
@@ -278,16 +314,7 @@ class MyScene extends THREE.Scene {
 
     onMouseMove (event) {
         if (this.mouseDown) {
-            /*
-            switch (this.applicationMode) {
-                case TheScene.ADDING_BOXES :
-                case TheScene.MOVING_BOXES :
-                    this.moveBox (event, TheScene.MOVE_BOX);
-                    break;
-                default :
-                    this.applicationMode = TheScene.NO_ACTION;
-                    break;
-            }*/
+
         }
         else{
             var mouse =new THREE.Vector2() ;
@@ -309,24 +336,41 @@ class MyScene extends THREE.Scene {
 
             this.pickedObjects = raycaster.intersectObjects(pickableObjects,true);
 
+            if(actions.NEW_SHIP) {
+                if (this.pickedObjects.length > 0) {
+                    this.selectedObject = this.pickedObjects[0].object;
 
-            if(this.pickedObjects.length > 0){
-                this.selectedObject = this.pickedObjects[0].object;
+                    for (i = 0; i < this.tablero.boxesArray.length; i++) {
+                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                            this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
 
-                for(i = 0; i < this.tablero.boxesArray.length; i++){
-                    if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
-                        this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
-                        this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
+                            if (actions.IS_HORIZONTAL) {
+                                this.tablero.overXNewShip(this.foundBox.fila, this.foundBox.columna, actions.N_BARCOS);
+                                this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna, actions.N_BARCOS);
+                            } else {
+                                this.tablero.overYNewShift(this.foundBox.fila, this.foundBox.columna, actions.N_BARCOS);
+                                this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna, actions.N_BARCOS);
+                            }
 
-                        if( actions.IS_HORIZONTAL ){
-                            this.tablero.overX(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
-                            this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
                         }
-                        else{
-                            this.tablero.overY(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
-                            this.tablero.resetOverY(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
-                        }
+                    }
+                }
+            } else {
+                if (this.pickedObjects.length > 0) {
+                    this.selectedObject = this.pickedObjects[0].object;
 
+                    for (i = 0; i < this.tablero.boxesArray.length; i++) {
+                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                            this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
+
+                            this.foundBox.over();
+                            // como tam=1 se puede usar X
+                            this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna, 1);
+
+
+                        }
                     }
                 }
             }

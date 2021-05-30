@@ -10,7 +10,7 @@ export class Jugador {
         this.puntos++;
     }
 
-    barcoHundido() {
-        this.puntos += 3;
+    ganador() {
+        return this.puntos == 20;
     }
 }

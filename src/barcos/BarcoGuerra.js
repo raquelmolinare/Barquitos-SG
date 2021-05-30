@@ -43,15 +43,14 @@ class BarcoGuerra extends THREE.Object3D {
       nodo.position.y = 2.65;
       nodo.position.z = lado -1;
 
-
+        this.lado = lado;
       this.add(nodo);
 
   }
-  
-  update() {
 
-  }
-
+    hundir() {
+        this.position.z -= this.lado / 2;
+    }
 }
 
 export { BarcoGuerra }

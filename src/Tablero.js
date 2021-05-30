@@ -49,7 +49,7 @@ export class Tablero extends THREE.Object3D {
 
     }
 
-    async construirBarcos() {
+    construirBarcos() {
         this.barcos = [];
         this.barcos.push(new BarcoBote(this.lado));
         this.barcos.push(new BarcoPescador(this.lado));
@@ -65,7 +65,7 @@ export class Tablero extends THREE.Object3D {
         this.boxesArray[(f*this.COLS)+c].over();
     }
 
-    overX(f,c,n){
+    overXNewShip(f, c, n){
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
 
         var wrong = false;
@@ -79,7 +79,7 @@ export class Tablero extends THREE.Object3D {
         else{
             //2.Mirar si ya están seleccionadas
             for(let i = 0; i < n && !wrong ; i++) {
-                if( this.boxesArray[(f * this.COLS) + (c+i)].seleccionado ){
+                if( this.boxesArray[(f * this.COLS) + (c+i)].tieneBarco ){
                     wrong=true;
                 }
             }
@@ -95,11 +95,16 @@ export class Tablero extends THREE.Object3D {
             }
         }
 
-
     }
 
-
-    resetOverX(f,c,n){
+    /**
+     * Hace reset de todo el tablero menos la posición indicada o
+     * la ocupada por los barcos.
+     * @param f fila
+     * @param c columna
+     * @param n ocupación de cuadros.
+     */
+    resetOverX(f,c,n=1){
         for (let i = 0; i < this.boxesArray.length; i++) {
             if(this.boxesArray[i].fila != f){ //Si no pertenecen a la misma fila
                 this.boxesArray[i].resetMaterial();
@@ -114,7 +119,7 @@ export class Tablero extends THREE.Object3D {
         }
     }
 
-    overY(f, c, n){
+    overYNewShift(f, c, n){
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
 
         if(f+n > this.FILAS ){
@@ -139,7 +144,7 @@ export class Tablero extends THREE.Object3D {
         else{
             //2.Mirar si ya están seleccionadas
             for(let i = 0; i < n && !wrong ; i++) {
-                if( this.boxesArray[( (f+i) * this.COLS) + c].seleccionado ){
+                if( this.boxesArray[( (f+i) * this.COLS) + c].tieneBarco ){
                     wrong=true;
                 }
             }
@@ -158,7 +163,7 @@ export class Tablero extends THREE.Object3D {
     }
 
 
-    resetOverY(f,c,n){
+    resetOverY(f,c,n=1){
         for (let i = 0; i < this.boxesArray.length; i++) {
             if(this.boxesArray[i].columna != c){ //Si no pertenecen a la misma columna
                 this.boxesArray[i].resetMaterial();
@@ -173,7 +178,7 @@ export class Tablero extends THREE.Object3D {
     }
 
 
-    selectX(f,c,n) {
+    selectXNewShip(f, c, n) {
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
         let salida = false;
         //Mirar si se pueden seleccionar
@@ -187,7 +192,7 @@ export class Tablero extends THREE.Object3D {
         console.log("--f:"+f+" c="+c+" n="+n)
         for(let i = 0; i < n && seleccionables; i++) {
             console.log("compruebo: f="+f+" c="+(c+i))
-            if( this.boxesArray[(f * this.COLS) + (c+i)].seleccionado ){
+            if( this.boxesArray[(f * this.COLS) + (c+i)].tieneBarco ){
                 seleccionables=false;
             }
         }
@@ -195,7 +200,7 @@ export class Tablero extends THREE.Object3D {
         //2. Mirar si se salen del tablero y si no seleccionar
         if( seleccionables ){
             for(let i = 0; i < n; i++) {
-                this.boxesArray[(f * this.COLS) + c + i].select();
+                this.boxesArray[(f * this.COLS) + c + i].posicionarBarco(n);
             }
             this.barcos[n - 2].position.x += c * this.lado;
             this.barcos[n - 2].position.y += f * this.lado;
@@ -205,8 +210,35 @@ export class Tablero extends THREE.Object3D {
         return salida;
     }
 
+    _comprobarHundido(barco) {
+        let hundido = false;
+        let cont = 0;
+        for(let i=0; i<this.boxesArray.length; i++) {
+            if(this.boxesArray[i].barcoContenido == barco && this.boxesArray[i].disparado ) cont++;
+        }
 
-    selectY(f, c, n){
+        if(cont == barco) hundido = true;
+        return hundido;
+    }
+
+    _hundirBarco(barco) {
+        console.log('LLAMO A HUNDIR BARCO')
+        this.barcos[barco - 2].hundir();
+    }
+
+    shoot(f, c) {
+        if(!this.boxesArray[f * this.COLS + c].disparado) {
+            this.boxesArray[f * this.COLS + c].shoot();
+            let barco = this.boxesArray[f * this.COLS + c].barcoContenido;
+            if(barco != null) {
+                if(this._comprobarHundido(barco)) this._hundirBarco(barco);
+            }
+        }
+    }
+
+
+
+    selectYNewShip(f, c, n){
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
         let salida = false;
         //Mirar si se pueden seleccionar
@@ -219,7 +251,7 @@ export class Tablero extends THREE.Object3D {
         //2.Mirar si ya están seleccionadas
         for(let i = 0; i < n && seleccionables; i++) {
             console.log("compruebo: f="+f+i+" c="+c)
-            if( this.boxesArray[( (f+i) * this.COLS) + c].seleccionado ){
+            if( this.boxesArray[( (f+i) * this.COLS) + c].tieneBarco ){
                 seleccionables=false;
                 //console.log("no se puede: f="+(f+i)+" c="+c)
             }
@@ -229,7 +261,7 @@ export class Tablero extends THREE.Object3D {
         if(seleccionables) {
             for(let i = 0; i < n; i++) {
                 //console.log("compruebo: f="+(f+i)+" c="+c)
-                this.boxesArray[( (f+i) * this.COLS) + c].select();
+                this.boxesArray[( (f+i) * this.COLS) + c].posicionarBarco(n);
             }
 
             this.barcos[n - 2].position.x += ( c + 1 ) * this.lado;
@@ -243,10 +275,7 @@ export class Tablero extends THREE.Object3D {
     }
 
 
-    /*
-    onDocumentMouseDown(e) {
-        alert('hola')
-    }
+
     /**
      * It returns the position of the mouse in normalized coordinates ([-1,1],[-1,1])
      * @param event - Mouse information

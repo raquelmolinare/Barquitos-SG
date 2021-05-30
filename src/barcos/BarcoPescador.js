@@ -65,12 +65,13 @@ class BarcoPescador extends THREE.Object3D {
         nodo.position.y = lado/2;
         nodo.position.z = 0.9 * lado;
         nodo.position.x = lado + 1.2;
+        this.lado = lado;
         this.add(nodo);
 
     }
 
-    update() {
-
+    hundir() {
+        this.position.z -= this.lado / 2;
     }
 
 }
