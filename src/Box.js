@@ -18,6 +18,7 @@ export class Box extends THREE.Scene {
 
         //Varibles necesarias
         this.tieneBarco=false;
+        this.tieneBarcoAlrededor=false;
         this.fila=f;
         this.columna=c;
         this.disparado = false;
@@ -62,14 +63,18 @@ export class Box extends THREE.Scene {
     }
 
     resetMaterial() {
-        if( !this.tieneBarco && !this.disparado) {
+        if( !this.tieneBarco && !this.disparado && !this.tieneBarcoAlrededor) {
             this.boxMesh.material = this.defaultMaterial;
             this.boxMesh.material.opacity = this.defaultMaterial.opacity;
         } else {
             if(this.disparado) {
                 this.boxMesh.material = this.blackMaterial;
                 this.boxMesh.material.opacity = this.blackMaterial.opacity;
-            } else {
+            } else if(this.tieneBarcoAlrededor){
+                this.boxMesh.material = this.overWrongMaterial;
+                this.boxMesh.material.transparent= true;
+                this.boxMesh.material.opacity = 0.3;
+            }else{
                 this.boxMesh.material = this.selectMaterial;
                 this.boxMesh.material.opacity = this.selectMaterial.opacity;
             }
@@ -99,6 +104,7 @@ export class Box extends THREE.Scene {
             this.overWrong();
         } else {
             this.boxMesh.material = this.overMaterial;
+            //this.boxMesh.material.transparent= this.overMaterial.transparent;
             this.boxMesh.material.opacity = this.overMaterial.opacity;
         }
 
@@ -106,11 +112,13 @@ export class Box extends THREE.Scene {
 
     overWrong() {
         this.boxMesh.material = this.overWrongMaterial;
+        this.boxMesh.material.transparent= false;
         this.boxMesh.material.opacity = this.overWrongMaterial.opacity;
     }
 
     overRight() {
         this.boxMesh.material = this.overRightMaterial;
+        this.boxMesh.material.transparent= false;
         this.boxMesh.material.opacity = this.overRightMaterial.opacity;
     }
 

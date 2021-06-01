@@ -30,18 +30,8 @@ class BarcoPescador extends THREE.Object3D {
                     },null,null
                 );
             },
-            // called when loading is in progresses
-            function ( xhr ) {
-
-                console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded materials' );
-
-            },
-            // called when loading has errors
-            function ( error ) {
-
-                console.log( 'An error happened materials' );
-
-            },
+            null,
+            null
 
 
         );

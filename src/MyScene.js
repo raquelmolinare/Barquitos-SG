@@ -356,6 +356,10 @@ class MyScene extends THREE.Scene {
                         }
                     }
                 }
+                else{
+                    //Si se esta pasando por fuera del tablero se limpia el over del tablero
+                    this.tablero.cleanOver();
+                }
             } else {
                 if (this.pickedObjects.length > 0) {
                     this.selectedObject = this.pickedObjects[0].object;
@@ -372,6 +376,10 @@ class MyScene extends THREE.Scene {
 
                         }
                     }
+                }
+                else{
+                    //Si se esta pasando por fuera del tablero se limpia el over del tablero
+                    this.tablero.cleanOver();
                 }
             }
         }

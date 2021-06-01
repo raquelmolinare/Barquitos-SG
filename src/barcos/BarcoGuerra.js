@@ -28,9 +28,7 @@ class BarcoGuerra extends THREE.Object3D {
                   function(object){
                       modelo = object;
                       nodo.add(modelo);
-                  },
-                  null,
-                  null
+                  },null,null
               );
           },null,null
       );
