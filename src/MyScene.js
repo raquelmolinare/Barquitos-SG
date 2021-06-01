@@ -281,8 +281,13 @@ class MyScene extends THREE.Scene {
                         }
                     }
                 }
-                if(this.jugadores[actions.TURNO].terminadaColocacion())
+                if(this.jugadores[actions.TURNO].terminadaColocacion()) {
                     this.siguienteTurno();
+                }
+
+                if(this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
+                    this.empezarPartida();
+                }
 
             } else {
                                
@@ -327,6 +332,20 @@ class MyScene extends THREE.Scene {
         } else {
             this.applicationMode = actions.NO_ACTION;
         }
+    }
+
+    empezarPartida() {
+        this._tab1 = new Tablero();
+        this._tab2 = new Tablero();
+        this._tab1.position.set(-50, 0, 0)
+        this._tab2.position.set(50, 0, 0)
+        let escalado = 0.6;
+        this.tablero1.scale.set(escalado,escalado,escalado);
+        this.tablero2.scale.set(escalado,escalado,escalado);
+        this.tablero1.position.set(-60, 70, 0);
+        this.tablero2.position.set(60, 70, 0);
+        this.add(this._tab1)
+        this.add(this._tab2)
     }
 
     onMouseUp(event) {

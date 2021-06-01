@@ -7,7 +7,7 @@ import {BarcoGuerra} from "./barcos/BarcoGuerra.js";
 import {BarcoPirata} from "./barcos/BarcoPirata.js";
 
 export class Tablero extends THREE.Object3D {
-    constructor() {
+    constructor(tab = null) {
         super();
         this.FILAS = 10;
         this.COLS = 8;
@@ -54,7 +54,7 @@ export class Tablero extends THREE.Object3D {
         this.barcos.push(new BarcoBote(this.lado));
         this.barcos.push(new BarcoPescador(this.lado));
         this.barcos.push(new Submarino(this.lado));
-        this.barcos.push(new BarcoGuerra(this.lado));
+        this.barcos.push(new BarcoPescador(this.lado));
         this.barcos.push(new BarcoPirata(this.lado));
     }
 
