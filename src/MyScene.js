@@ -48,11 +48,20 @@ class MyScene extends THREE.Scene {
         this.add(this.tablero2);
     }
 
-    siguienteTurno() {
+    siguienteTurno(partida = true) {
         actions.TURNO = actions.SIG_TURNO;
-        actions.SIG_TURNO == 0 ? this.tablero = this.tablero1 : this.tablero = this.tablero2;
+        if (partida) {
+            actions.SIG_TURNO == 0 ? this.tablero = this.tablero1 : this.tablero = this.tablero2;
+        } else {
+            if(actions.SIG_TURNO == 0) {
+                this.tablero = this.tablero2;
+                this.tableroEspejo = this._tab1;
+            } else {
+                this.tablero = this.tablero1;
+                this.tableroEspejo = this._tab2;
+            }
+        }
         actions.SIG_TURNO == 0 ? actions.SIG_TURNO = 1 : actions.SIG_TURNO = 0;
-
     }
 
     cargarNombres() {
@@ -281,16 +290,15 @@ class MyScene extends THREE.Scene {
                         }
                     }
                 }
-                if(this.jugadores[actions.TURNO].terminadaColocacion()) {
+
+                if (this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
+                    this.empezarPartida();
+                } else if (this.jugadores[actions.TURNO].terminadaColocacion()) {
                     this.siguienteTurno();
                 }
 
-                if(this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
-                    this.empezarPartida();
-                }
-
             } else {
-                               
+
                 // No estamos colocando barcos.
                 var mouse = new THREE.Vector2();
                 mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -305,8 +313,8 @@ class MyScene extends THREE.Scene {
                 //Se añaden las cajas del tablero
                 var i = 0;
 
-                for (i; i < this.tablero.boxesArray.length; i++) {
-                    pickableObjects.push(this.tablero.boxesArray[i]);
+                for (i; i < this.tableroEspejo.boxesArray.length; i++) {
+                    pickableObjects.push(this.tableroEspejo.boxesArray[i]);
                 }
 
                 this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
@@ -315,20 +323,25 @@ class MyScene extends THREE.Scene {
                 if (this.pickedObjects.length > 0) {
                     this.selectedObject = this.pickedObjects[0].object;
                     let parar = false;
-                    for (i = 0; i < this.tablero.boxesArray.length && !parar; i++) {
-                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
-                            this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
-                            this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
-
-                            this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
+                    for (i = 0; i < this.tableroEspejo.boxesArray.length && !parar; i++) {
+                        if (this.tableroEspejo.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tableroEspejo.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                            this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
+                            // comprueba si se ha hundido,
+                            let rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
+                            if(rtado.tocado) {
+                                this.foundBox.shootTocado();
+                            } else {
+                                this.foundBox.shootAgua();
+                            }
 
                             parar = true;
                         }
                     }
                 }
-                this.siguienteTurno();
+                this.siguienteTurno(false);
             }
-            
+
         } else {
             this.applicationMode = actions.NO_ACTION;
         }
@@ -340,12 +353,15 @@ class MyScene extends THREE.Scene {
         this._tab1.position.set(-50, 0, 0)
         this._tab2.position.set(50, 0, 0)
         let escalado = 0.6;
-        this.tablero1.scale.set(escalado,escalado,escalado);
-        this.tablero2.scale.set(escalado,escalado,escalado);
+        this.tablero1.scale.set(escalado, escalado, escalado);
+        this.tablero2.scale.set(escalado, escalado, escalado);
         this.tablero1.position.set(-60, 70, 0);
         this.tablero2.position.set(60, 70, 0);
         this.add(this._tab1)
         this.add(this._tab2)
+
+        // cambio la referencia del talero usar
+        this.siguienteTurno(false);
     }
 
     onMouseUp(event) {
@@ -367,7 +383,7 @@ class MyScene extends THREE.Scene {
 
 
             var pickableObjects = [];
-
+            if (!this.jugadores[actions.TURNO].terminadaColocacion()) {
             //Se añaden las cajas del tablero
             var i = 0;
 
@@ -377,7 +393,7 @@ class MyScene extends THREE.Scene {
 
             this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
 
-            if (!this.jugadores[actions.TURNO].terminadaColocacion()) {
+
                 if (this.pickedObjects.length > 0) {
                     this.selectedObject = this.pickedObjects[0].object;
 
@@ -401,24 +417,32 @@ class MyScene extends THREE.Scene {
                     this.tablero.cleanOver();
                 }
             } else {
+                var i = 0;
+
+                for (i; i < this.tableroEspejo.boxesArray.length; i++) {
+                    pickableObjects.push(this.tableroEspejo.boxesArray[i]);
+                }
+
+                this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
+
                 if (this.pickedObjects.length > 0) {
                     this.selectedObject = this.pickedObjects[0].object;
 
-                    for (i = 0; i < this.tablero.boxesArray.length; i++) {
-                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
-                            this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
-                            this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
+                    for (i = 0; i < this.tableroEspejo.boxesArray.length; i++) {
+                        if (this.tableroEspejo.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                            this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
 
                             this.foundBox.over();
                             // como tam=1 se puede usar X
-                            this.tablero.resetOverX(this.foundBox.fila, this.foundBox.columna, 1);
+                            this.tableroEspejo.resetOverX(this.foundBox.fila, this.foundBox.columna, 1);
 
 
                         }
                     }
                 } else {
                     //Si se esta pasando por fuera del tablero se limpia el over del tablero
-                    this.tablero.cleanOver();
+                    this.tableroEspejo.cleanOver();
                 }
             }
         }

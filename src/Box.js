@@ -8,7 +8,6 @@ export class Box extends THREE.Scene {
         this.boxGeometry = new THREE.BoxGeometry(lado,lado,lado);
 
         //Diferentes materiales que tendrá según acciones
-        this.boxMaterial = new THREE.MeshNormalMaterial({transparent: true, opacity: 0.7});
         this.defaultMaterial = new THREE.MeshNormalMaterial({transparent: true, opacity: 0.7});
         this.selectMaterial = new THREE.MeshPhongMaterial({color: 0xCF0000});
         this.overMaterial = new THREE.MeshBasicMaterial({color: 0xffff00});
@@ -23,8 +22,9 @@ export class Box extends THREE.Scene {
         this.columna=c;
         this.disparado = false;
         this.barcoContenido = null;
+        this.matDefinitivo = this.defaultMaterial;
 
-        this.boxMesh = new THREE.Mesh(this.boxGeometry, this.boxMaterial);
+        this.boxMesh = new THREE.Mesh(this.boxGeometry, this.defaultMaterial);
         this.boxMesh.position.x = pointX;
         this.boxMesh.position.y = pointY;
         this.boxMesh.position.z = pointZ;
@@ -43,12 +43,26 @@ export class Box extends THREE.Scene {
     }
 
     shoot() {
-        console.log(this.barcoContenido)
         if(!this.disparado) {
             this.boxMesh.material = this.blackMaterial;
             this.boxMesh.material.opacity = this.blackMaterial.opacity;
             this.disparado = true;
         }
+        return this.tieneBarco;
+    }
+
+    shootTocado() {
+        this.boxMesh.material = this.overRightMaterial;
+        //this.boxMesh.material.opacity = this.blackMaterial.opacity;
+        this.disparado = true;
+        this.matDefinitivo = this.overRightMaterial;
+    }
+
+    shootAgua() {
+        this.boxMesh.material = this.overWrongMaterial;
+        //this.boxMesh.material.opacity = this.blackMaterial.opacity;
+        this.disparado = true;
+        this.matDefinitivo = this.overWrongMaterial;
     }
 
     rotateBox(event){
@@ -63,23 +77,9 @@ export class Box extends THREE.Scene {
     }
 
     resetMaterial() {
-        if( !this.tieneBarco && !this.disparado && !this.tieneBarcoAlrededor) {
-            this.boxMesh.material = this.defaultMaterial;
-            this.boxMesh.material.opacity = this.defaultMaterial.opacity;
-        } else {
-            if(this.disparado) {
-                this.boxMesh.material = this.blackMaterial;
-                this.boxMesh.material.opacity = this.blackMaterial.opacity;
-            } else if(this.tieneBarcoAlrededor){
-                this.boxMesh.material = this.overWrongMaterial;
-                this.boxMesh.material.transparent= true;
-                this.boxMesh.material.opacity = 0.3;
-            }else{
-                this.boxMesh.material = this.selectMaterial;
-                this.boxMesh.material.opacity = this.selectMaterial.opacity;
-            }
-
-        }
+        this.boxMesh.material = this.matDefinitivo;
+        this.boxMesh.material.opacity = this.matDefinitivo.opacity;
+        this.boxMesh.material.transparent = true;
     }
 
     /**
@@ -91,6 +91,7 @@ export class Box extends THREE.Scene {
         this.boxMesh.material.opacity = this.selectMaterial.opacity;
         this.tieneBarco = true;
         this.barcoContenido = barco;
+        this.matDefinitivo = this.selectMaterial;
     }
 
     deselect() {
@@ -110,6 +111,7 @@ export class Box extends THREE.Scene {
 
     }
 
+    // Colocando el barco y no hay sitio
     overWrong() {
         this.boxMesh.material = this.overWrongMaterial;
         this.boxMesh.material.transparent= false;
@@ -124,20 +126,16 @@ export class Box extends THREE.Scene {
 
     marcarCasillaAlrededor(){
         this.boxMesh.material = this.overWrongMaterial;
-        this.boxMesh.material.transparent= true;
+        this.boxMesh.material.transparent = true;
         this.boxMesh.material.opacity = 0.3;
         this.tieneBarcoAlrededor = true;
+        this.matDefinitivo = this.overWrongMaterial;
+        //this.matDefinitivo.material.transparent = true;
+        this.matDefinitivo.opacity = 0.3;
     }
 
-    update(selected) {
-        if(selected == true){
-            this.boxMesh.material.transparent = true;
-            this.boxMesh.material.opacity = 0.35;
-        }
+    update() {
 
-        else{
-            this.boxMesh.material.transparent = false;
-        }
     }
 }
 

@@ -409,13 +409,21 @@ export class Tablero extends THREE.Object3D {
     }
 
     shoot(f, c) {
+        let salida = {
+            tocado: false,
+            hundido: false
+        };
         if(!this.boxesArray[f * this.COLS + c].disparado) {
-            this.boxesArray[f * this.COLS + c].shoot();
+            salida.tocado = this.boxesArray[f * this.COLS + c].shoot();
             let barco = this.boxesArray[f * this.COLS + c].barcoContenido;
             if(barco != null) {
-                if(this._comprobarHundido(barco)) this._hundirBarco(barco);
+                if(this._comprobarHundido(barco)) {
+                    this._hundirBarco(barco);
+                    salida.hundido = true;
+                }
             }
         }
+        return salida;
     }
 
 
