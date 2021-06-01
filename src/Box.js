@@ -122,6 +122,13 @@ export class Box extends THREE.Scene {
         this.boxMesh.material.opacity = this.overRightMaterial.opacity;
     }
 
+    marcarCasillaAlrededor(){
+        this.boxMesh.material = this.overWrongMaterial;
+        this.boxMesh.material.transparent= true;
+        this.boxMesh.material.opacity = 0.3;
+        this.tieneBarcoAlrededor = true;
+    }
+
     update(selected) {
         if(selected == true){
             this.boxMesh.material.transparent = true;

@@ -76,20 +76,20 @@ export class Tablero extends THREE.Object3D {
 
                 for(let i = c; i < c+n+1; i++) {
                     console.log("marcando casilla ("+(f+1)+","+i+") como alrededor");
-                    this.boxesArray[((f+1) * this.COLS) + i].tieneBarcoAlrededor = true;
+                    this.boxesArray[((f+1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
 
             }
             else if(c+n-1 == this.COLS-1 ){  //Si esta junto al borde derecho
                 for(let i = c-1; i < c+n; i++) {
                     console.log("marcando casilla ("+(f+1)+","+i+") como alrededor");
-                    this.boxesArray[((f+1) * this.COLS) + i].tieneBarcoAlrededor = true;
+                    this.boxesArray[((f+1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
             }
             else{ //En caso contrario
                 for(let i = c-1; i < c+n+1; i++) {
                     console.log("marcando casilla ("+(f+1)+","+i+") como alrededor");
-                    this.boxesArray[((f+1) * this.COLS) + i].tieneBarcoAlrededor = true;
+                    this.boxesArray[((f+1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
             }
         }
@@ -101,20 +101,20 @@ export class Tablero extends THREE.Object3D {
 
                 for(let i = c; i < c+n+1; i++) {
                     console.log("marcando casilla ("+(f-1)+","+i+") como alrededor");
-                    this.boxesArray[((f-1) * this.COLS) + i].tieneBarcoAlrededor = true;
+                    this.boxesArray[((f-1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
 
             }
             else if(c+n-1 == this.COLS-1 ){  //Si esta junto al borde derecho
                 for(let i = c-1; i < c+n; i++) {
                     console.log("marcando casilla ("+(f-1)+","+i+") como alrededor");
-                    this.boxesArray[((f-1) * this.COLS) + i].tieneBarcoAlrededor = true;
+                    this.boxesArray[((f-1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
             }
             else{ //En caso contrario
                 for(let i = c-1; i < c+n+1; i++) {
                     console.log("marcando casilla ("+(f-1)+","+i+") como alrededor");
-                    this.boxesArray[((f-1) * this.COLS) + i].tieneBarcoAlrededor = true;
+                    this.boxesArray[((f-1) * this.COLS) + i].marcarCasillaAlrededor();;
                 }
             }
         }
@@ -122,13 +122,13 @@ export class Tablero extends THREE.Object3D {
         //En la misma fila la columna anterior
         if( c > 0 ){
             console.log("marcando casilla ("+f+","+(c-1)+") como alrededor");
-            this.boxesArray[(f * this.COLS) + c-1].tieneBarcoAlrededor = true;
+            this.boxesArray[(f * this.COLS) + c-1].marcarCasillaAlrededor();
         }
 
         //En la misma fila la columna siguiente
         if( c+n-1 < this.COLS-1 ){
             console.log("marcando casilla ("+f+","+(c+n)+") como alrededor");
-            this.boxesArray[(f * this.COLS) + c+n].tieneBarcoAlrededor = true;
+            this.boxesArray[(f * this.COLS) + c+n].marcarCasillaAlrededor();
         }
     }
 
@@ -143,20 +143,20 @@ export class Tablero extends THREE.Object3D {
 
                 for(let i = f; i < f+n+1; i++) {
                     console.log("marcando casilla ("+i+","+(c+1)+") como alrededor");
-                    this.boxesArray[(i * this.COLS) + (c+1)].tieneBarcoAlrededor = true;
+                    this.boxesArray[(i * this.COLS) + (c+1)].marcarCasillaAlrededor();
                 }
 
             }
             else if(f+n-1 == this.FILAS-1 ){  //Si esta junto al borde superior
                 for(let i = f-1; i < f+n; i++) {
                     console.log("marcando casilla ("+i+","+(c+1)+") como alrededor");
-                    this.boxesArray[(i * this.COLS) + (c+1)].tieneBarcoAlrededor = true;
+                    this.boxesArray[(i * this.COLS) + (c+1)].marcarCasillaAlrededor();
                 }
             }
             else{ //En caso contrario
                 for(let i = f-1; i < f+n+1; i++) {
                     console.log("marcando casilla ("+i+","+(c+1)+") como alrededor");
-                    this.boxesArray[(i * this.COLS) + (c+1)].tieneBarcoAlrededor = true;
+                    this.boxesArray[(i * this.COLS) + (c+1)].marcarCasillaAlrededor();
                 }
             }
         }
@@ -168,20 +168,20 @@ export class Tablero extends THREE.Object3D {
 
                 for(let i = f; i < f+n+1; i++) {
                     console.log("marcando casilla ("+i+","+(c-1)+") como alrededor");
-                    this.boxesArray[(i * this.COLS) + (c-1)].tieneBarcoAlrededor = true;
+                    this.boxesArray[(i * this.COLS) + (c-1)].marcarCasillaAlrededor();
                 }
 
             }
             else if(f+n-1 == this.FILAS-1 ){  //Si esta junto al borde superior
                 for(let i = f-1; i < f+n; i++) {
                     console.log("marcando casilla ("+i+","+(c-1)+") como alrededor");
-                    this.boxesArray[(i * this.COLS) + (c-1)].tieneBarcoAlrededor = true;
+                    this.boxesArray[(i * this.COLS) + (c-1)].marcarCasillaAlrededor();
                 }
             }
             else{ //En caso contrario
                 for(let i = f-1; i < f+n+1; i++) {
                     console.log("marcando casilla ("+i+","+(c-1)+") como alrededor");
-                    this.boxesArray[(i * this.COLS) + (c-1)].tieneBarcoAlrededor = true;
+                    this.boxesArray[(i * this.COLS) + (c-1)].marcarCasillaAlrededor();
                 }
             }
         }
@@ -189,13 +189,13 @@ export class Tablero extends THREE.Object3D {
         //En la misma columna la casilla anterior
         if( f > 0 ){
             console.log("marcando casilla ("+(f-1)+","+(c)+") como alrededor");
-            this.boxesArray[((f-1) * this.COLS) + c].tieneBarcoAlrededor = true;
+            this.boxesArray[((f-1) * this.COLS) + c].marcarCasillaAlrededor();
         }
 
         //En la misma columna la casilla siguiente
         if( f+n-1 < this.FILAS-1 ){
             console.log("marcando casilla ("+(f+n)+","+(c)+") como alrededor");
-            this.boxesArray[((f+n) * this.COLS) + c].tieneBarcoAlrededor = true;
+            this.boxesArray[((f+n) * this.COLS) + c].marcarCasillaAlrededor();
         }
     }
 
