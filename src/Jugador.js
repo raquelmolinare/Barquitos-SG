@@ -1,20 +1,22 @@
-import {MaxEquation} from "../libs/three.module";
-
 
 export class Jugador {
     constructor(name) {
         this.MAX_BARCOS = 6;
         this.name = name;
         this.puntos = 0; // barco derribado 1 punto
-        this.barcosColocados = 0;
+        this.barcoActual = 0;
+    }
+
+    getBarcoActual() {
+        return this.barcoActual + 2;
     }
 
     barcoColocado() {
-        this.barcosColocados++;
+        this.barcoActual++;
     }
 
     terminadaColocacion() {
-        return this.barcosColocados == this.MAX_BARCOS;
+        return this.barcoActual == this.MAX_BARCOS - 1;
     }
 
     barcoTocado() {
