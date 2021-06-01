@@ -96,6 +96,8 @@ export class Tablero extends THREE.Object3D {
 
         //En la fila inferior
         if( f > 0 ){
+            //Si la fila actual es mayor a la fila 0 entonces tengo que comprobar la fila de abajo
+            //En caso contrario no porque no existe esa fila en el tablero
 
             if(c == 0 ){ //Si esta junto al borde izquierdo
 
@@ -120,13 +122,13 @@ export class Tablero extends THREE.Object3D {
         }
 
         //En la misma fila la columna anterior
-        if( c > 0 ){
+        if( c > 0 ){ //Si no esta en el borde izquierdo
             console.log("marcando casilla ("+f+","+(c-1)+") como alrededor");
             this.boxesArray[(f * this.COLS) + c-1].marcarCasillaAlrededor();
         }
 
         //En la misma fila la columna siguiente
-        if( c+n-1 < this.COLS-1 ){
+        if( c+n-1 < this.COLS-1 ){ //Si no está en el borde derecho
             console.log("marcando casilla ("+f+","+(c+n)+") como alrededor");
             this.boxesArray[(f * this.COLS) + c+n].marcarCasillaAlrededor();
         }
@@ -187,13 +189,13 @@ export class Tablero extends THREE.Object3D {
         }
 
         //En la misma columna la casilla anterior
-        if( f > 0 ){
+        if( f > 0 ){ //Si no está en el borde inferior
             console.log("marcando casilla ("+(f-1)+","+(c)+") como alrededor");
             this.boxesArray[((f-1) * this.COLS) + c].marcarCasillaAlrededor();
         }
 
         //En la misma columna la casilla siguiente
-        if( f+n-1 < this.FILAS-1 ){
+        if( f+n-1 < this.FILAS-1 ){ //Si no está en el borde superior
             console.log("marcando casilla ("+(f+n)+","+(c)+") como alrededor");
             this.boxesArray[((f+n) * this.COLS) + c].marcarCasillaAlrededor();
         }
