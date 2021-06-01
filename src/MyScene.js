@@ -36,11 +36,22 @@ class MyScene extends THREE.Scene {
         this.axis = new THREE.AxesHelper(15);
         this.add(this.axis);
         this.jugadores = [];
-        //this.cargarNombres()
+        this.cargarNombres()
 
         // Tablero
-        this.tablero = new Tablero();
-        this.add(this.tablero);
+        this.tablero1 = new Tablero();
+        //this.tablero2 = new Tablero();
+        this.tablero1.position.set(-50, 0, 0);
+        this.tablero2.position.set(50, 0, 0);
+        this.siguienteTurno();
+        this.add(this.tablero1);
+        this.add(this.tablero2);
+    }
+
+    siguienteTurno() {
+        actions.TURNO = actions.SIG_TURNO;
+        actions.SIG_TURNO == 0 ? this.tablero = this.tablero1 : this.tablero = this.tablero2;
+        actions.SIG_TURNO == 0 ? actions.SIG_TURNO = 1 : actions.SIG_TURNO = 0;
     }
 
     cargarNombres() {
@@ -48,7 +59,6 @@ class MyScene extends THREE.Scene {
         this.jugadores.push(new Jugador(person1));
         let person2 = prompt("Nombre jugador 2", "");
         this.jugadores.push(new Jugador(person2));
-        console.log(this.jugadores)
     }
 
     createCamera() {
@@ -250,13 +260,17 @@ class MyScene extends THREE.Scene {
                             if( actions.IS_HORIZONTAL ) {
                                 console.log(actions.N_BARCOS);
                                 let bien = this.tablero.selectXNewShip(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
-                                if (bien) {
-                                    actions.N_BARCOS < actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
+                                if (bien && !this.jugadores[actions.TURNO].terminadaColocacion()) {
+                                    this.jugadores[actions.TURNO].barcoColocado();
+                                } else if(this.jugadores[actions.TURNO].terminadaColocacion()) {
+                                    actions.NEW_SHIP = false;
                                 }
                             } else {
                                 let bien = this.tablero.selectYNewShip(this.foundBox.fila, this.foundBox.columna,actions.N_BARCOS);
-                                if (bien) {
-                                    actions.N_BARCOS < actions.MAX_BARCOS ? actions.N_BARCOS++ :  actions.NEW_SHIP = false;
+                                if (bien && !this.jugadores[actions.TURNO].terminadaColocacion()) {
+                                    this.jugadores[actions.TURNO].barcoColocado();
+                                } else if(this.jugadores[actions.TURNO].terminadaColocacion()) {
+                                    actions.NEW_SHIP = false;
                                 }
                             }
                             parar = true;
@@ -264,6 +278,7 @@ class MyScene extends THREE.Scene {
                     }
                 }
             } else {
+                this.siguienteTurno();
                 // No estamos colocando barcos.
                 var mouse =new THREE.Vector2() ;
                 mouse.x = (event.clientX/window.innerWidth)*2 - 1 ;
