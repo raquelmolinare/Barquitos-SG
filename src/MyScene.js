@@ -6,7 +6,13 @@ import {TrackballControls} from '../libs/TrackballControls.js';
 import {Tablero} from './Tablero.js';
 import {Jugador} from './Jugador.js';
 import {actions} from './params.js';
-import {Box} from './Box.js';
+
+/**
+ * Variable global para los disparos de los
+ * sonidos
+ * @type Sound
+ */
+export let sound = null;
 
 class MyScene extends THREE.Scene {
     constructor(myCanvas) {
@@ -76,7 +82,12 @@ class MyScene extends THREE.Scene {
         //   El ángulo del campo de visión en grados sexagesimales
         //   La razón de aspecto ancho/alto
         //   Los planos de recorte cercano y lejano
+        // create an AudioListener and add it to the camera
+        const listener = new THREE.AudioListener();
+        sound = new THREE.Audio( listener );
+
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera.add( listener );
         // También se indica dónde se coloca
         this.camera.position.set(20, 10, 150);
         // Y hacia dónde mira

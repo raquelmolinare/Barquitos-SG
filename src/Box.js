@@ -1,5 +1,5 @@
 import * as THREE from '../libs/three.module.js';
-
+import {sound} from './MyScene.js';
 export class Box extends THREE.Scene {
     constructor(lado, pointX, pointY, pointZ, f,c){
         super();
@@ -52,13 +52,25 @@ export class Box extends THREE.Scene {
     }
 
     shootTocado() {
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load( '../sounds/disparo.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setVolume( 0.5 );
+            sound.play();
+        });
         this.boxMesh.material = this.overRightMaterial;
         //this.boxMesh.material.opacity = this.blackMaterial.opacity;
         this.disparado = true;
         this.matDefinitivo = this.overRightMaterial;
     }
-
+    // see https://threejs.org/docs/#api/en/audio/Audio
     shootAgua() {
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load( '../sounds/agua.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setVolume( 0.5 );
+            sound.play();
+        });
         this.boxMesh.material = this.overWrongMaterial;
         //this.boxMesh.material.opacity = this.blackMaterial.opacity;
         this.disparado = true;
