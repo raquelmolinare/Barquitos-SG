@@ -59,7 +59,7 @@ class MyScene extends THREE.Scene {
         if (partida) {
             actions.SIG_TURNO == 0 ? this.tablero = this.tablero1 : this.tablero = this.tablero2;
         } else {
-            if(actions.SIG_TURNO == 0) {
+            if (actions.SIG_TURNO == 0) {
                 this.tablero = this.tablero2;
                 this.tableroEspejo = this._tab1;
             } else {
@@ -84,10 +84,10 @@ class MyScene extends THREE.Scene {
         //   Los planos de recorte cercano y lejano
         // create an AudioListener and add it to the camera
         const listener = new THREE.AudioListener();
-        sound = new THREE.Audio( listener );
+        sound = new THREE.Audio(listener);
 
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.camera.add( listener );
+        this.camera.add(listener);
         // También se indica dónde se coloca
         this.camera.position.set(20, 10, 150);
         // Y hacia dónde mira
@@ -304,53 +304,66 @@ class MyScene extends THREE.Scene {
 
                 if (this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
                     this.empezarPartida();
+                    this.tablero.visible=false
                 } else if (this.jugadores[actions.TURNO].terminadaColocacion()) {
                     this.siguienteTurno();
                 }
 
             } else {
+                if (!actions.FIN_JUEGO) {
+                    // Estamos disparando. No colocando barcos.
+                    var mouse = new THREE.Vector2();
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
 
-                // No estamos colocando barcos.
-                var mouse = new THREE.Vector2();
-                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
-
-                var raycaster = new THREE.Raycaster();
-                raycaster.setFromCamera(mouse, this.camera);
-
-
-                var pickableObjects = [];
-
-                //Se añaden las cajas del tablero
-                var i = 0;
-
-                for (i; i < this.tableroEspejo.boxesArray.length; i++) {
-                    pickableObjects.push(this.tableroEspejo.boxesArray[i]);
-                }
-
-                this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
+                    var raycaster = new THREE.Raycaster();
+                    raycaster.setFromCamera(mouse, this.camera);
 
 
-                if (this.pickedObjects.length > 0) {
-                    this.selectedObject = this.pickedObjects[0].object;
-                    let parar = false;
-                    for (i = 0; i < this.tableroEspejo.boxesArray.length && !parar; i++) {
-                        if (this.tableroEspejo.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tableroEspejo.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
-                            this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
-                            this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
-                            // comprueba si se ha hundido,
-                            let rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
-                            if(rtado.tocado) {
-                                this.foundBox.shootTocado();
-                            } else {
-                                this.foundBox.shootAgua();
+                    var pickableObjects = [];
+
+                    //Se añaden las cajas del tablero
+                    var i = 0;
+
+                    for (i; i < this.tableroEspejo.boxesArray.length; i++) {
+                        pickableObjects.push(this.tableroEspejo.boxesArray[i]);
+                    }
+
+                    this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
+
+                    let casillaMarcada = false;
+                    if (this.pickedObjects.length > 0) {
+                        this.selectedObject = this.pickedObjects[0].object;
+                        let parar = false;
+                        for (i = 0; i < this.tableroEspejo.boxesArray.length && !parar; i++) {
+                            if (this.tableroEspejo.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tableroEspejo.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                                this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
+                                this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
+                                // comprueba si se ha hundido,
+                                let rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
+
+                                if (rtado.tocado) {
+                                    casillaMarcada = this.foundBox.shootTocado();
+                                    this.jugadores[actions.TURNO].barcoTocado();
+                                } else {
+                                    casillaMarcada = this.foundBox.shootAgua();
+                                }
+
+                                parar = true;
                             }
-
-                            parar = true;
                         }
                     }
+
+                    // Miro si el jugador actual ha ganado
+                    if (this.jugadores[actions.TURNO].ganador()) {
+                        actions.FIN_JUEGO = true;
+                        alert('HA GANADO ' + this.jugadores[actions.TURNO].name)
+                    } else {
+                        // evito que salte de turno sin marcar una casilla en el correspondiente tab.
+                        if (casillaMarcada) this.siguienteTurno(false);
+                    }
                 }
-                this.siguienteTurno(false);
+
             }
 
         } else {
@@ -395,14 +408,14 @@ class MyScene extends THREE.Scene {
 
             var pickableObjects = [];
             if (!this.jugadores[actions.TURNO].terminadaColocacion()) {
-            //Se añaden las cajas del tablero
-            var i = 0;
+                //Se añaden las cajas del tablero
+                var i = 0;
 
-            for (i; i < this.tablero.boxesArray.length; i++) {
-                pickableObjects.push(this.tablero.boxesArray[i]);
-            }
+                for (i; i < this.tablero.boxesArray.length; i++) {
+                    pickableObjects.push(this.tablero.boxesArray[i]);
+                }
 
-            this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
+                this.pickedObjects = raycaster.intersectObjects(pickableObjects, true);
 
 
                 if (this.pickedObjects.length > 0) {

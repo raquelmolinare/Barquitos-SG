@@ -5,6 +5,7 @@ export class Jugador {
         this.name = name;
         this.puntos = 0; // barco derribado 1 punto
         this.barcoActual = 0;
+        this.MAX_PUNTOS = 20;
     }
 
     getBarcoActual() {
@@ -24,6 +25,6 @@ export class Jugador {
     }
 
     ganador() {
-        return this.puntos == 20;
+        return this.puntos == this.MAX_PUNTOS;
     }
 }
