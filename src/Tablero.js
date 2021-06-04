@@ -52,10 +52,10 @@ export class Tablero extends THREE.Object3D {
     construirBarcos() {
         this.barcos = [];
         this.barcos.push(new BarcoBote(this.lado));
-        this.barcos.push(new BarcoPescador(this.lado));
-        this.barcos.push(new Submarino(this.lado));
-        this.barcos.push(new BarcoPescador(this.lado));
-        this.barcos.push(new BarcoPirata(this.lado));
+        this.barcos.push(new BarcoBote(this.lado));
+        this.barcos.push(new BarcoBote(this.lado));
+        this.barcos.push(new BarcoBote(this.lado));
+        this.barcos.push(new BarcoBote(this.lado));
     }
 
     cambaiarColor(f,c){

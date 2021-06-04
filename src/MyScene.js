@@ -51,7 +51,12 @@ class MyScene extends THREE.Scene {
         this.tablero1 = new Tablero();
         this.tablero2 = new Tablero();
         this.tablero1.position.set(this.posTab1.x, this.posTab1.y, this.posTab1.z);
-        this.tablero2.position.set(this.posTab2.x, this.posTab2.y, this.posTab2.z);
+        
+        
+        this.tablero2.rotation.y = Math.PI;
+        //this.tablero2.rotation.y = Math.PI;
+        this.tablero2.position.set(this.posTab2.x + 40, this.posTab2.y, this.posTab2.z);
+        
         this.primera = true;
         this.siguienteTurno();
         this.add(this.tablero1);
@@ -100,30 +105,28 @@ class MyScene extends THREE.Scene {
             destino = { x: 20, y: 25, z: -150 };
         } else {
             origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
-            mitad = { x: 150, y: 25, z: 0 };
+            mitad = { x: -150, y: 25, z: 0 };
             destino = { x: 20, y: 25, z: 150 };
         }
 
         let animacionCambioTurno1 = new TWEEN.Tween(origen)
-            .to(mitad, 5000)
+            .to(mitad, 300)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(origen.x, origen.y, origen.z);
                 // Cambiamos a dónde mira la camara
-                
-            }).onComplete(function() {
                 that.camera.lookAt(0,25,0);
+            }).onComplete(function() {
+                
             });
 
         let animacionCambioTurno2 = new TWEEN.Tween(mitad)
-            .to(destino, 5000)
+            .to(destino, 200)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(mitad.x, mitad.y, mitad.z);
                 // Cambiamos a dónde mira la camara
-                
-            }).onComplete(function() {
-                that.camera.lookAt(20, 25, 150);
+                that.camera.lookAt(0,25,0);
             });
 
         animacionCambioTurno1.chain(animacionCambioTurno2)
@@ -151,7 +154,7 @@ class MyScene extends THREE.Scene {
         // También se indica dónde se coloca
         this.camera.position.set(20, 25, 150);
         // Y hacia dónde mira
-        var look = new THREE.Vector3(10, 30, 0);
+        var look = new THREE.Vector3(0, 25, 0);
         this.camera.lookAt(look);
         this.add(this.camera);
 
@@ -437,13 +440,15 @@ class MyScene extends THREE.Scene {
     empezarPartida() {
         this._tab1 = new Tablero();
         this._tab2 = new Tablero();
-        this._tab1.position.set(0, 0, 0)
-        this._tab2.position.set(0, 0, -70)
+        this._tab1.position.set(0, 0, 40)
+        this._tab2.rotation.y = Math.PI;
+        this._tab2.position.set(40, 0, -40)
+        
         let escalado = 0.6;
         this.tablero1.scale.set(escalado, escalado, escalado);
         this.tablero2.scale.set(escalado, escalado, escalado);
-        this.tablero1.position.set(50, 0, 0);
-        this.tablero2.position.set(50, 0, -70);
+        this.tablero1.position.set(50, 0, 40);
+        this.tablero2.position.set(50 + 24, 0, -40);
         this.add(this._tab1)
         this.add(this._tab2)
 
