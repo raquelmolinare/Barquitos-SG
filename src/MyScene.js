@@ -1,11 +1,11 @@
 // Clases de la biblioteca
 
 import * as THREE from '../libs/three.module.js';
-import {GUI} from '../libs/dat.gui.module.js';
-import {TrackballControls} from '../libs/TrackballControls.js';
-import {Tablero} from './Tablero.js';
-import {Jugador} from './Jugador.js';
-import {actions} from './params.js';
+import { GUI } from '../libs/dat.gui.module.js';
+import { TrackballControls } from '../libs/TrackballControls.js';
+import { Tablero } from './Tablero.js';
+import { Jugador } from './Jugador.js';
+import { actions } from './params.js';
 import * as TWEEN from '../libs/tween.esm.js';
 /*
  * Variable global para los disparos de los
@@ -44,15 +44,16 @@ class MyScene extends THREE.Scene {
         this.jugadores = [];
         this.cargarNombres()
 
-        this.posTab1 = new THREE.Vector3(0, 0, 0);
-        this.posTab2 = new THREE.Vector3(0, 0, -70);
+        this.posTab1 = new THREE.Vector3(0, 0, 40);
+        this.posTab2 = new THREE.Vector3(0, 0, -40);
 
         // Tablero
         this.tablero1 = new Tablero();
         this.tablero2 = new Tablero();
         this.tablero1.position.set(this.posTab1.x, this.posTab1.y, this.posTab1.z);
         this.tablero2.position.set(this.posTab2.x, this.posTab2.y, this.posTab2.z);
-        //this.siguienteTurno();
+        this.primera = true;
+        this.siguienteTurno();
         this.add(this.tablero1);
         this.add(this.tablero2);
     }
@@ -62,6 +63,13 @@ class MyScene extends THREE.Scene {
      * @param partida indica si estamos colocando barcos o no
      */
     siguienteTurno(partida = true) {
+        // la primera vez no cambio la camara
+        if (!this.primera) {
+            this.moverCamaraTurno();
+        } else {
+            this.primera = false;
+        }
+
         actions.TURNO = actions.SIG_TURNO;
         if (partida) {
             actions.SIG_TURNO == 0 ? this.tablero = this.tablero1 : this.tablero = this.tablero2;
@@ -76,7 +84,6 @@ class MyScene extends THREE.Scene {
             }
         }
         actions.SIG_TURNO == 0 ? actions.SIG_TURNO = 1 : actions.SIG_TURNO = 0;
-        this.moverCamaraTurno();
     }
 
     moverCamaraTurno() {
@@ -84,25 +91,43 @@ class MyScene extends THREE.Scene {
         let that = this;
 
         let origen;
+        let mitad;
         let destino;
-
-        if(actions.TURNO == 0) {
-            origen  = {x: this.posTab1.x, y: this.posTab1.y + 10, z: this.posTab1.z + 80};
-            destino = {x: this.posTab2.x, y: this.posTab2.y + 10, z: this.posTab2.z - 80};
+        console.log(actions.TURNO);
+        if (actions.TURNO == 0) {
+            origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z };
+            mitad = { x: -150, y: 25, z: 0 };
+            destino = { x: 20, y: 25, z: -150 };
         } else {
-            origen  = {x: this.posTab2.x, y: this.posTab2.y + 10, z: this.posTab2.z - 80};
-            destino = {x: this.posTab1.x, y: this.posTab1.y + 10, z: this.posTab1.z + 80};
+            origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
+            mitad = { x: 150, y: 25, z: 0 };
+            destino = { x: 20, y: 25, z: 150 };
         }
 
-        let animacionCambioTurno = new TWEEN.Tween(origen)
-            .to(destino, 5000)
+        let animacionCambioTurno1 = new TWEEN.Tween(origen)
+            .to(mitad, 5000)
             .easing(TWEEN.Easing.Quadratic.InOut)
-            .onUpdate(function() {
+            .onUpdate(function () {
                 that.camera.position.set(origen.x, origen.y, origen.z);
                 // Cambiamos a dónde mira la camara
-                //that.camera.lookAt(that.posTab2);
+                
+            }).onComplete(function() {
+                that.camera.lookAt(0,25,0);
             });
-        animacionCambioTurno.start();
+
+        let animacionCambioTurno2 = new TWEEN.Tween(mitad)
+            .to(destino, 5000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(function () {
+                that.camera.position.set(mitad.x, mitad.y, mitad.z);
+                // Cambiamos a dónde mira la camara
+                
+            }).onComplete(function() {
+                that.camera.lookAt(20, 25, 150);
+            });
+
+        animacionCambioTurno1.chain(animacionCambioTurno2)
+        animacionCambioTurno1.start();
     }
 
     cargarNombres() {
@@ -124,7 +149,7 @@ class MyScene extends THREE.Scene {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.add(listener);
         // También se indica dónde se coloca
-        this.camera.position.set(20, 10, 150);
+        this.camera.position.set(20, 25, 150);
         // Y hacia dónde mira
         var look = new THREE.Vector3(10, 30, 0);
         this.camera.lookAt(look);
@@ -149,7 +174,7 @@ class MyScene extends THREE.Scene {
 
         // El material se hará con una textura de madera
         var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
-        var materialGround = new THREE.MeshPhongMaterial({map: texture});
+        var materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
         // Ya se puede construir el Mesh
         var ground = new THREE.Mesh(geometryGround, materialGround);
@@ -522,10 +547,10 @@ class MyScene extends THREE.Scene {
     onKeyDown(event) {
         var x = event.which || event.keyCode;
         switch (x) {
-            case 17 : // Ctrl key
+            case 17: // Ctrl key
                 this.getCameraControls().enabled = true;
                 break;
-            case 9 : // Tab key
+            case 9: // Tab key
                 if (actions.IS_HORIZONTAL == 0) {
                     actions.IS_HORIZONTAL = 1;
                 } else {
@@ -540,7 +565,7 @@ class MyScene extends THREE.Scene {
     onKeyUp(event) {
         var x = event.which || event.keyCode;
         switch (x) {
-            case 17 : // Ctrl key
+            case 17: // Ctrl key
                 this.getCameraControls().enabled = false;
                 break;
         }
