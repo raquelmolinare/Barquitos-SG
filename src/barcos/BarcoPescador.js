@@ -62,7 +62,7 @@ class BarcoPescador extends THREE.Object3D {
         //this.position.z -= this.lado / 2;
         var that = this;
 
-        this.objectLoader.load( '../models/barco_pescador/modelo.obj', function ( object ) {
+        this.objectLoader.load( '../models/barco_pescador/modelo.obj',  ( object ) => {
             object.traverse( child => {
 
                 if ( child.material ) child.material =new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})

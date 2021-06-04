@@ -6,8 +6,8 @@ import {TrackballControls} from '../libs/TrackballControls.js';
 import {Tablero} from './Tablero.js';
 import {Jugador} from './Jugador.js';
 import {actions} from './params.js';
-
-/**
+import * as TWEEN from '../libs/tween.esm.js';
+/*
  * Variable global para los disparos de los
  * sonidos
  * @type Sound
@@ -44,21 +44,29 @@ class MyScene extends THREE.Scene {
         this.jugadores = [];
         this.cargarNombres()
 
+        this.posTab1 = new THREE.Vector3(0, 0, 0);
+        this.posTab2 = new THREE.Vector3(0, 0, -70);
+
         // Tablero
         this.tablero1 = new Tablero();
         this.tablero2 = new Tablero();
-        this.tablero1.position.set(-50, 0, 0);
-        this.tablero2.position.set(50, 0, 0);
-        this.siguienteTurno();
+        this.tablero1.position.set(this.posTab1.x, this.posTab1.y, this.posTab1.z);
+        this.tablero2.position.set(this.posTab2.x, this.posTab2.y, this.posTab2.z);
+        //this.siguienteTurno();
         this.add(this.tablero1);
         this.add(this.tablero2);
     }
 
+    /**
+     *
+     * @param partida indica si estamos colocando barcos o no
+     */
     siguienteTurno(partida = true) {
         actions.TURNO = actions.SIG_TURNO;
         if (partida) {
             actions.SIG_TURNO == 0 ? this.tablero = this.tablero1 : this.tablero = this.tablero2;
         } else {
+            // Estamos disparando
             if (actions.SIG_TURNO == 0) {
                 this.tablero = this.tablero2;
                 this.tableroEspejo = this._tab1;
@@ -68,6 +76,33 @@ class MyScene extends THREE.Scene {
             }
         }
         actions.SIG_TURNO == 0 ? actions.SIG_TURNO = 1 : actions.SIG_TURNO = 0;
+        this.moverCamaraTurno();
+    }
+
+    moverCamaraTurno() {
+
+        let that = this;
+
+        let origen;
+        let destino;
+
+        if(actions.TURNO == 0) {
+            origen  = {x: this.posTab1.x, y: this.posTab1.y + 10, z: this.posTab1.z + 80};
+            destino = {x: this.posTab2.x, y: this.posTab2.y + 10, z: this.posTab2.z - 80};
+        } else {
+            origen  = {x: this.posTab2.x, y: this.posTab2.y + 10, z: this.posTab2.z - 80};
+            destino = {x: this.posTab1.x, y: this.posTab1.y + 10, z: this.posTab1.z + 80};
+        }
+
+        let animacionCambioTurno = new TWEEN.Tween(origen)
+            .to(destino, 5000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onUpdate(function() {
+                that.camera.position.set(origen.x, origen.y, origen.z);
+                // Cambiamos a dónde mira la camara
+                //that.camera.lookAt(that.posTab2);
+            });
+        animacionCambioTurno.start();
     }
 
     cargarNombres() {
@@ -226,6 +261,7 @@ class MyScene extends THREE.Scene {
         // Se actualiza el resto del modelo
         this.tablero.update();
 
+        TWEEN.update();
 
         // Le decimos al renderizador "visualiza la escena que te indico usando la cámara que te estoy pasando"
         this.renderer.render(this, this.getCamera());
@@ -304,7 +340,6 @@ class MyScene extends THREE.Scene {
 
                 if (this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
                     this.empezarPartida();
-                    this.tablero.visible=false
                 } else if (this.jugadores[actions.TURNO].terminadaColocacion()) {
                     this.siguienteTurno();
                 }
@@ -371,16 +406,19 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    /**
+     * Crea los tableros espejo.
+     */
     empezarPartida() {
         this._tab1 = new Tablero();
         this._tab2 = new Tablero();
-        this._tab1.position.set(-50, 0, 0)
-        this._tab2.position.set(50, 0, 0)
+        this._tab1.position.set(0, 0, 0)
+        this._tab2.position.set(0, 0, -70)
         let escalado = 0.6;
         this.tablero1.scale.set(escalado, escalado, escalado);
         this.tablero2.scale.set(escalado, escalado, escalado);
-        this.tablero1.position.set(-60, 70, 0);
-        this.tablero2.position.set(60, 70, 0);
+        this.tablero1.position.set(50, 0, 0);
+        this.tablero2.position.set(50, 0, -70);
         this.add(this._tab1)
         this.add(this._tab2)
 
