@@ -16,17 +16,22 @@ class BarcoPescador extends THREE.Object3D {
         var that = this;
 
         var materialLoader = new MTLLoader();
-        var objectLoader = new OBJLoader();
+        this.objectLoader = new OBJLoader();
 
-        var nodo = new Object3D();
-        var modelo;
+        this.nodo = new Object3D();
+        this.modelo;
         materialLoader.load( '../models/barco_pescador/materiales.mtl',
             function (materials){
-                objectLoader.setMaterials(materials);
-                objectLoader.load( '../models/barco_pescador/modelo.obj',
+                that.objectLoader.setMaterials(materials);
+                that.objectLoader.load( '../models/barco_pescador/modelo.obj',
                     function(object){
-                        modelo = object;
-                        nodo.add(modelo);
+                        that.modelo = object;
+                        that.nodo.add(that.modelo);
+                       /* nodo.traverse( child => {
+
+                            if ( child.material ) child.material =new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})
+
+                        } );*/
                     },null,null
                 );
             },
@@ -36,32 +41,36 @@ class BarcoPescador extends THREE.Object3D {
 
         );
 
-        nodo.traverseVisible (function (that) {
-            if (that.material) {
-                that.material.wireframe = true;
-            }
-        });
-
-
         //Posicionar
         //nodo.position.y= 1;
         //nodo.position.y+= 0.1;
         //nodo.scale.set(0.3,0.4,0.22);
         //nodo.position.x= -0.4;
 
-        nodo.scale.set(0.215*lado,0.315*lado,0.22*lado);
-        nodo.rotation.x = Math.PI / 2;
+        this.nodo.scale.set(0.215*lado,0.315*lado,0.22*lado);
+        this.nodo.rotation.x = Math.PI / 2;
         //nodo.position.x =- 0.25;
-        nodo.position.y = lado/2;
-        nodo.position.z = 0.9 * lado;
-        nodo.position.x = lado + 1.2;
+        this.nodo.position.y = lado/2;
+        this.nodo.position.z = 0.9 * lado;
+        this.nodo.position.x = lado + 1.2;
         this.lado = lado;
-        this.add(nodo);
+        this.add(this.nodo);
 
     }
 
     hundir() {
-        this.position.z -= this.lado / 2;
+        //this.position.z -= this.lado / 2;
+        var that = this;
+
+        this.objectLoader.load( '../models/barco_pescador/modelo.obj', function ( object ) {
+            object.traverse( child => {
+
+                if ( child.material ) child.material =new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})
+
+            });
+            that.nodo.remove(that.modelo);
+            that.nodo.add( object );
+        }, null, null );
     }
 
 }
