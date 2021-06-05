@@ -349,16 +349,13 @@ class MyScene extends THREE.Scene {
                                     this.jugadores[actions.TURNO].getBarcoActual()
                                 );
                                 if (bien && !this.jugadores[actions.TURNO].terminadaColocacion()) {
-
                                     this.jugadores[actions.TURNO].barcoColocado();
-
                                 }
 
                             } else {
                                 let bien = this.tablero.selectYNewShip(this.foundBox.fila, this.foundBox.columna, this.jugadores[actions.TURNO].getBarcoActual());
                                 if (bien && !this.jugadores[actions.TURNO].terminadaColocacion()) {
                                     this.jugadores[actions.TURNO].barcoColocado();
-
                                 }
                             }
                             parar = true;
