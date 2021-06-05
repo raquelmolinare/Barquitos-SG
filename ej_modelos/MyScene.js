@@ -21,6 +21,7 @@ import { Submarino } from '../src/barcos/Submarino.js'
 import { BarcoGuerra } from '../src/barcos/BarcoGuerra.js'
 import {BarcoPirata} from "../src/barcos/BarcoPirata.js";
 import {BarcoBote} from "../src/barcos/BarcoBote.js";
+import {Barco} from "./Barco.js";
 
 /// La clase fachada del modelo
 /**
@@ -57,8 +58,13 @@ class MyScene extends THREE.Scene {
     // Por último creamos el modelo.
     // El modelo puede incluir su parte de la interfaz gráfica de usuario. Le pasamos la referencia a 
     // la gui y el texto bajo el que se agruparán los controles de la interfaz que añada el modelo.
-    
+
+    this.barcoBote = new Barco();
+    this.barcoBote.position.set(1,0,0);
+    this.add (this.barcoBote );
+
     //barcoBote
+    /*
     this.barcoBote = new BarcoBote(this.gui, "Controles barco");
     this.barcoBote.position.set(1,0,0);
     this.add (this.barcoBote );
@@ -83,7 +89,7 @@ class MyScene extends THREE.Scene {
     this.barcoGuerra = new BarcoGuerra(this.gui, "Controles barco");
     this.barcoGuerra.position.set(2.5,0,9.0);
     this.add (this.barcoGuerra );
-
+*/
 
 
     //-----CAJAS-------------------
@@ -319,9 +325,6 @@ class MyScene extends THREE.Scene {
     this.cameraControl.update();
     
     // Se actualiza el resto del modelo
-
-    //barcoGerra
-    this.barcoGuerra.update();
     
     // Este método debe ser llamado cada vez que queramos visualizar la escena de nuevo.
     // Literalmente le decimos al navegador: "La próxima vez que haya que refrescar la pantalla, llama al método que te indico".
