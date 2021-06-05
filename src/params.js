@@ -5,5 +5,6 @@ export let actions = {
   TURNO: 0,             // turno actual
   IS_HORIZONTAL: true,
   MAX_BARCOS: 6,
-  FIN_JUEGO: false
+  FIN_JUEGO: false,
+  PANTALLA_INICIO: true,
 }

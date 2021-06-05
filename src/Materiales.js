@@ -8,4 +8,6 @@ export const Materiales = {
     incorrecto: new THREE.MeshBasicMaterial({transparent: false, color: 0xff0000, opacity: 1.0}),
     negro     : new THREE.MeshBasicMaterial({transparent: false, color: 0x000000, opacity: 1.0}),
     alrededor : new THREE.MeshBasicMaterial({transparent: true, color: 0xff0000, opacity: 0.3}),
+    blanco    : new THREE.MeshBasicMaterial({color: 0xFFFFFF}),
+    Matnegro : new THREE.MeshBasicMaterial({color: 0x000000}),
 }

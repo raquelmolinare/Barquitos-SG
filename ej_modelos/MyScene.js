@@ -21,7 +21,7 @@ import { Submarino } from '../src/barcos/Submarino.js'
 import { BarcoGuerra } from '../src/barcos/BarcoGuerra.js'
 import {BarcoPirata} from "../src/barcos/BarcoPirata.js";
 import {BarcoBote} from "../src/barcos/BarcoBote.js";
-import {Barco} from "./Barco.js";
+import {Barco} from "../src/barcos/Barco.js";
 
 /// La clase fachada del modelo
 /**

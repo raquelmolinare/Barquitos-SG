@@ -1,10 +1,6 @@
 import * as THREE from '../libs/three.module.js';
 import {Box} from './Box.js';
-import {BarcoPescador} from "./barcos/BarcoPescador.js";
-import {BarcoBote} from "./barcos/BarcoBote.js";
-import {Submarino} from "./barcos/Submarino.js";
-import {BarcoGuerra} from "./barcos/BarcoGuerra.js";
-import {BarcoPirata} from "./barcos/BarcoPirata.js";
+import {Barco} from "./barcos/Barco.js";
 
 export class Tablero extends THREE.Object3D {
     constructor(tab = null) {
@@ -51,11 +47,11 @@ export class Tablero extends THREE.Object3D {
 
     construirBarcos() {
         this.barcos = [];
-        this.barcos.push(new BarcoBote(this.lado));
-        this.barcos.push(new BarcoBote(this.lado));
-        this.barcos.push(new BarcoBote(this.lado));
-        this.barcos.push(new BarcoBote(this.lado));
-        this.barcos.push(new BarcoBote(this.lado));
+        this.barcos.push(new Barco(2,this.lado));
+        this.barcos.push(new Barco(3,this.lado));
+        this.barcos.push(new Barco(4,this.lado));
+        this.barcos.push(new Barco(5,this.lado));
+        this.barcos.push(new Barco(6,this.lado));
     }
 
     cambaiarColor(f,c){
