@@ -338,7 +338,8 @@ class MyScene extends THREE.Scene {
 
                     let parar = false;
                     for (i = 0; i < this.tablero.boxesArray.length && !parar; i++) {
-                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                        if (this.tablero.boxesArray[i].getPosition().x == this.selectedObject.position.x &&
+                            this.tablero.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
                             this.tablero.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                             this.foundBox = this.tablero.boxesArray[i];  //Hemos encontrado la caja
 
@@ -396,7 +397,8 @@ class MyScene extends THREE.Scene {
                         this.selectedObject = this.pickedObjects[0].object;
                         let parar = false;
                         for (i = 0; i < this.tableroEspejo.boxesArray.length && !parar; i++) {
-                            if (this.tableroEspejo.boxesArray[i].getPosition().x == this.selectedObject.position.x && this.tableroEspejo.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
+                            if (this.tableroEspejo.boxesArray[i].getPosition().x == this.selectedObject.position.x &&
+                                this.tableroEspejo.boxesArray[i].getPosition().y == this.selectedObject.position.y &&
                                 this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                                 this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
                                 // comprueba si se ha hundido,
