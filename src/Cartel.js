@@ -44,6 +44,7 @@ export class Cartel extends THREE.Object3D {
     over() {
         //this.textoText.children[0].material  = Materiales.Matnegro;
 
+        // cambio material a todos los hijos...
         this.textoText.traverse( child => {
             if ( child.material ) child.material = Materiales.Matnegro;
         });

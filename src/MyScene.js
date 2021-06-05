@@ -57,7 +57,8 @@ class MyScene extends THREE.Scene {
         this.tablero1 = new Tablero();
         this.tablero2 = new Tablero();
         this.tablero1.position.set(this.posTab1.x, this.posTab1.y, this.posTab1.z);
-        
+
+        this.cartel
         
         this.tablero2.rotation.y = Math.PI;
         //this.tablero2.rotation.y = Math.PI;
