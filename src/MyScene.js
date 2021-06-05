@@ -520,8 +520,7 @@ class MyScene extends THREE.Scene {
                         this.pagInicio.botonPlay.over();
                     }
                 } else {
-                    if(this.pagInicio !== undefined)
-                        this.pagInicio.botonPlay.overOut();
+                    this.pagInicio.botonPlay.overOut();
                 }
             } else {
                 var mouse = new THREE.Vector2();

@@ -42,14 +42,30 @@ export class Cartel extends THREE.Object3D {
     }
 
     over() {
-        this.textoText.children[0].material  = Materiales.Matnegro;
-        this.formaInterna.children[0].material = Materiales.blanco;
+        //this.textoText.children[0].material  = Materiales.Matnegro;
+
+        this.textoText.traverse( child => {
+            if ( child.material ) child.material = Materiales.Matnegro;
+        });
+
+        //this.formaInterna.children[0].material = Materiales.blanco;
+        this.formaInterna.traverse( child => {
+            if ( child.material ) child.material = Materiales.blanco;
+        });
+
         this._over = true;
     }
 
     overOut() {
-        this.textoText.children[0].material  =  Materiales.blanco;
-        this.formaInterna.children[0].material = Materiales.Matnegro;
+        //this.textoText.children[0].material  =  Materiales.blanco;
+        this.textoText.traverse( child => {
+            if ( child.material ) child.material =  Materiales.blanco;
+        });
+
+        //this.formaInterna.children[0].material = Materiales.Matnegro;
+        this.formaInterna.traverse( child => {
+            if ( child.material ) child.material =  Materiales.Matnegro;
+        });
         this._over = false;
     }
 
