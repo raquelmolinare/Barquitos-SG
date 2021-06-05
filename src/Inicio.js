@@ -18,7 +18,7 @@ export class Inicio extends THREE.Object3D {
 
         let posBoton = new THREE.Vector3(-10.0,0.0,50.0);
         let posTextBoton = new THREE.Vector3(xBoton/5,yBoton/4,yBoton/4);
-        this.botonPlay = new Cartel(posBoton, xBoton,yBoton, 'START', posTextBoton);
+        this.botonPlay = new Cartel(posBoton, xBoton,yBoton, 'START', yBoton/2,posTextBoton);
 
 
         this.add(this.titulo);

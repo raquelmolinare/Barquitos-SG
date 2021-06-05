@@ -4,7 +4,7 @@ import {Materiales} from "./Materiales.js";
 import {Texto} from "./Texto.js";
 
 export class Cartel extends THREE.Object3D {
-    constructor(pos, sizeX, sizeY, text, textPosition ){
+    constructor(pos, sizeX, sizeY, text, textSize, textPosition ){
         super();
 
         this._over = false;
@@ -27,7 +27,7 @@ export class Cartel extends THREE.Object3D {
         this.formaInterna.userData = this;
 
         this.fontURL = '../fonts/helve.json';
-        this.textoText = new Texto(textPosition, text, sizeY/2, Materiales.blanco, this.fontURL);
+        this.textoText = new Texto(textPosition, text, textSize, Materiales.blanco, this.fontURL);
 
         this.textoText.userData = this;
 

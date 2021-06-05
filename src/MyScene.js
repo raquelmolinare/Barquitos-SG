@@ -13,6 +13,7 @@ import * as TWEEN from '../libs/tween.esm.js';
 import {Materiales} from "./Materiales.js";
 import {BarcoBote} from "./barcos/BarcoBote.js";
 import {Titulo} from "./Titulo.js";
+import {Object3D} from "../libs/three.module.js";
 /*
  * Variable global para los disparos de los
  * sonidos
@@ -50,26 +51,57 @@ class MyScene extends THREE.Scene {
         this.jugadores = [];
         this.cargarNombres()
 
+        //-----PANTALLA INICIO------------------------------------------------
+        this.pagInicio = new Inicio();
+        this.add(this.pagInicio);
+
+
+
+        //-----PANTALLA JUEGO------------------------------------------------
+        this.pantallaJuego = new Object3D();
+
         this.posTab1 = new THREE.Vector3(0, 0, 40);
         this.posTab2 = new THREE.Vector3(0, 0, -40);
 
-        // Tablero
+        //Tableros
         this.tablero1 = new Tablero();
         this.tablero2 = new Tablero();
         this.tablero1.position.set(this.posTab1.x, this.posTab1.y, this.posTab1.z);
-
-        this.cartel
-        
         this.tablero2.rotation.y = Math.PI;
         //this.tablero2.rotation.y = Math.PI;
         this.tablero2.position.set(this.posTab2.x + 40, this.posTab2.y, this.posTab2.z);
-        
+
+        //Carteles
+        let poscartelTurno1 = new THREE.Vector3(40, 20, 0);
+        let poscartelTurno2 = new THREE.Vector3(-40, 0, 0);
+
+        // tamaños del cartel
+        let xCartel = 150.0;
+        let yCartel = 30.0;
+
+        this.cartelTurno1 = new Cartel(poscartelTurno1, xCartel,yCartel, 'TURNO JUGADOR 1', 10.0 ,new THREE.Vector3(xCartel/5,yCartel/4,yCartel/4));
+        this.cartelTurno2 = new Cartel(poscartelTurno2, xCartel,yCartel, 'TURNO JUGADOR 2', 10.0 ,new THREE.Vector3(xCartel/5,yCartel/4,yCartel/4));
+
+        //MURO
+        //Geometria
+        this.boxGeometry = new THREE.BoxGeometry(80.0,85.0,1);
+
+        //MESH
+        this.muro = new THREE.Mesh(this.boxGeometry, Materiales.Matnegro);
+        this.muro.position.set(0.0,0,0.0);
+
+
+
+        this.pantallaJuego.add(this.tablero1);
+        this.pantallaJuego.add(this.tablero2);
+        this.pantallaJuego.add(this.cartelTurno1);
+        this.pantallaJuego.add(this.cartelTurno2);
+        this.pantallaJuego.add(this.muro);
+
         this.primera = true;
         this.siguienteTurno();
 
 
-        this.pagInicio = new Inicio();
-        this.add(this.pagInicio);
     }
 
     /**
@@ -114,12 +146,12 @@ class MyScene extends THREE.Scene {
             destino = { x: 20, y: 25, z: -150 };
         } else {
             origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
-            mitad = { x: -150, y: 25, z: 0 };
+            mitad = { x: 150, y: 25, z: 0 };
             destino = { x: 20, y: 25, z: 150 };
         }
 
         let animacionCambioTurno1 = new TWEEN.Tween(origen)
-            .to(mitad, 300)
+            .to(mitad, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(origen.x, origen.y, origen.z);
@@ -130,7 +162,7 @@ class MyScene extends THREE.Scene {
             });
 
         let animacionCambioTurno2 = new TWEEN.Tween(mitad)
-            .to(destino, 200)
+            .to(destino, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(mitad.x, mitad.y, mitad.z);
@@ -338,8 +370,10 @@ class MyScene extends THREE.Scene {
                 if (this.pickedObjects.length > 0) {
                     this.remove(this.pagInicio);
                     actions.PANTALLA_INICIO = false;
-                    this.add(this.tablero1);
-                    this.add(this.tablero2);
+                    //this.add(this.tablero1);
+                    //this.add(this.tablero2);
+                    this.add(this.pantallaJuego);
+                    this.ponerCartelTab();
                 }
             } else {
                 if (!this.jugadores[actions.TURNO].terminadaColocacion()) {
@@ -400,6 +434,7 @@ class MyScene extends THREE.Scene {
                     }
 
                     if (this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
+                        $('#cartel').css('visibility','hidden').hide().fadeOut(5000);
                         this.empezarPartida();
                     } else if (this.jugadores[actions.TURNO].terminadaColocacion()) {
                         this.siguienteTurno();
@@ -469,6 +504,10 @@ class MyScene extends THREE.Scene {
         } else {
             this.applicationMode = actions.NO_ACTION;
         }
+    }
+
+    ponerCartelTab() {
+        $('#cartel').css('visibility','visible').hide().fadeIn(5000);
     }
 
     /**
