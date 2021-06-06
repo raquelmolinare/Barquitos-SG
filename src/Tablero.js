@@ -52,7 +52,7 @@ export class Tablero extends THREE.Object3D {
         this.boxGeometrylateral = new THREE.BoxGeometry(0.5,this.lado*this.FILAS,this.lado+3.0);
         this.boxGeometrysuperior = new THREE.BoxGeometry(this.lado*this.COLS,0.5,0.5);
 
-        if(texturaReflejo != undefined){
+        if(texturaReflejo != null){
             this.materialEspejo = new THREE.MeshBasicMaterial({color: 0xffffff, envMap : texturaReflejo}) ;
         }
         else{

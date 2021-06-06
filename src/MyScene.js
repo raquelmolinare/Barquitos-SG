@@ -64,19 +64,6 @@ class MyScene extends THREE.Scene {
 
         this.background = this.textureCube;
 
-    /*
-        const scene = new THREE.Scene();
-        scene.background = new THREE.CubeTextureLoader()
-            .setPath( '../textures/cube/' )
-            .load( [
-                'px.png',
-                'nx.png',
-                'py.png',
-                'ny.png',
-                'pz.png',
-                'nz.png'
-            ] );
-        */
 
         //-----PANTALLA INICIO------------------------------------------------
         this.pagInicio = new Inicio();
@@ -560,9 +547,13 @@ class MyScene extends THREE.Scene {
 
         let posTextGanador = new THREE.Vector3(0-xCartelGanador/2.5, yCartelGanador/3.5,10.0);
 
-        var texto = 'Ganador  '+this.jugadores[actions.TURNO].name;
+        let texto = 'Ganador  '+this.jugadores[actions.TURNO].name;
 
         let cartelGanador = new Cartel(posCartelGanador, xCartelGanador,yCartelGanador, texto, 25.0 ,posTextGanador, Materiales.arcoiris, Materiales.negro, Materiales.blanco);
+
+        if(this.camera.position.z < 0){
+            cartelGanador.rotation.y = Math.PI ;
+        }
 
         this.add(cartelGanador);
 
