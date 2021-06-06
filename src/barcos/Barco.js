@@ -9,6 +9,7 @@ import {GLTFLoader} from '../../libs/GLTFLoader.js'
 //Imports para la animacion
 import * as TWEEN from '../../libs/tween.esm.js'
 import {Object3D} from "../../libs/three.module.js";
+import {Materiales} from "../Materiales.js";
 
 class Barco extends THREE.Object3D {
     constructor(tam,lado) {
@@ -18,14 +19,14 @@ class Barco extends THREE.Object3D {
         var that = this;
 
         var materialLoader = new MTLLoader();
-        var objectLoader = new OBJLoader();
+        this.objectLoader = new OBJLoader();
 
         this.nodo = new Object3D();
         var modelo;
         materialLoader.load( '../models/yate/materiales.mtl',
             function (materials){
-                objectLoader.setMaterials(materials);
-                objectLoader.load( '../models/yate/modelo.obj',
+                that.objectLoader.setMaterials(materials);
+                that.objectLoader.load( '../models/yate/modelo.obj',
                     function(object){
                         /*object.traverse( child => {
 
@@ -71,12 +72,14 @@ class Barco extends THREE.Object3D {
     }
 
     hundir() {
-        this.position.z -= this.lado / 2;
+        //this.position.z -= this.lado / 2;
+
+        let that = this;
 
         this.objectLoader.load( '../models/yate/modelo.obj',  ( object ) => {
             object.traverse( child => {
 
-                if ( child.material ) child.material =new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})
+                if ( child.material ) child.material = new THREE.MeshNormalMaterial({transparent: true, opacity: 0.7})
 
             });
             that.nodo.remove(that.modelo);

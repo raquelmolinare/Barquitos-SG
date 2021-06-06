@@ -51,6 +51,32 @@ class MyScene extends THREE.Scene {
         this.jugadores = [];
         this.cargarNombres()
 
+        //----ESCENA--------
+        var path = "../textures/cube/";
+        var format = '.png';
+        var urls = [
+            path+'px'+format,path+'nx'+format,
+            path+'py'+format,path+'ny'+format,
+            path+'pz'+format,path+'nz'+format
+        ];
+
+        this.textureCube = new THREE.CubeTextureLoader().load(urls);
+
+        this.background = this.textureCube;
+
+        /*
+        const scene = new THREE.Scene();
+        scene.background = new THREE.CubeTextureLoader()
+            .setPath( '../textures/cubeMaps/' )
+            .load( [
+                'px.png',
+                'nx.png',
+                'py.png',
+                'ny.png',
+                'pz.png',
+                'nz.png'
+            ] );*/
+
         //-----PANTALLA INICIO------------------------------------------------
         this.pagInicio = new Inicio();
         this.add(this.pagInicio);
@@ -60,47 +86,43 @@ class MyScene extends THREE.Scene {
         //-----PANTALLA JUEGO------------------------------------------------
         this.pantallaJuego = new Object3D();
 
-        this.posTab1 = new THREE.Vector3(0, 0, 40);
-        this.posTab2 = new THREE.Vector3(0, 0, -40);
+        this.posTab1 = new THREE.Vector3(-30, -25, 40);
+        this.posTab2 = new THREE.Vector3(-30, -25, -40);
 
         //Tableros
-        this.tablero1 = new Tablero();
-        this.tablero2 = new Tablero();
+        this.tablero1 = new Tablero(this.textureCube);
+        this.tablero2 = new Tablero(this.textureCube);
         this.tablero1.position.set(this.posTab1.x, this.posTab1.y, this.posTab1.z);
         this.tablero2.rotation.y = Math.PI;
         //this.tablero2.rotation.y = Math.PI;
         this.tablero2.position.set(this.posTab2.x + 40, this.posTab2.y, this.posTab2.z);
 
         //Carteles
-        let poscartelTurno1 = new THREE.Vector3(40, 20, 0);
-        let poscartelTurno2 = new THREE.Vector3(-40, 0, 0);
+        let poscartelTurno1 = new THREE.Vector3(0, 0, 0);
+        let poscartelTurno2 = new THREE.Vector3(0, 0, 0);
 
         // tamaños del cartel
         let xCartel = 150.0;
         let yCartel = 30.0;
 
-        this.cartelTurno1 = new Cartel(poscartelTurno1, xCartel,yCartel, 'TURNO JUGADOR 1', 10.0 ,new THREE.Vector3(xCartel/5,yCartel/4,yCartel/4));
-        this.cartelTurno2 = new Cartel(poscartelTurno2, xCartel,yCartel, 'TURNO JUGADOR 2', 10.0 ,new THREE.Vector3(xCartel/5,yCartel/4,yCartel/4));
+        let posText = new THREE.Vector3(0-xCartel/2.2, yCartel/3.5,4.0);
 
-        //MURO
-        //Geometria
-        this.boxGeometry = new THREE.BoxGeometry(80.0,85.0,1);
+        this.cartelTurno1 = new Cartel(poscartelTurno1, xCartel,yCartel, 'TURNO JUGADOR 1', 10.0 ,posText, Materiales.arcoiris, Materiales.negro, Materiales.blanco);
+        this.cartelTurno2 = new Cartel(poscartelTurno2, xCartel,yCartel, 'TURNO JUGADOR 2', 10.0 ,posText, Materiales.arcoiris, Materiales.negro, Materiales.blanco);
+        this.cartelTurno1.rotation.y = Math.PI/2;
+        this.cartelTurno2.rotation.y = -Math.PI/2;
 
-        //MESH
-        this.muro = new THREE.Mesh(this.boxGeometry, Materiales.Matnegro);
-        this.muro.position.set(0.0,0,0.0);
-
+        this.cartelTurno1.position.x = 50;
+        this.cartelTurno2.position.x = -50;
 
 
         this.pantallaJuego.add(this.tablero1);
         this.pantallaJuego.add(this.tablero2);
         this.pantallaJuego.add(this.cartelTurno1);
         this.pantallaJuego.add(this.cartelTurno2);
-        this.pantallaJuego.add(this.muro);
 
         this.primera = true;
         this.siguienteTurno();
-
 
     }
 
@@ -130,6 +152,7 @@ class MyScene extends THREE.Scene {
             }
         }
         actions.SIG_TURNO == 0 ? actions.SIG_TURNO = 1 : actions.SIG_TURNO = 0;
+        
     }
 
     moverCamaraTurno() {
@@ -141,13 +164,22 @@ class MyScene extends THREE.Scene {
         let destino;
         console.log(actions.TURNO);
         if (actions.TURNO == 0) {
+
+            //Posicionar la camara por si el usuairo se mueve pr la escena
+            that.camera.position.set(0.0,0.0, 150.0);
+            that.camera.lookAt(0,0,0);
+
             origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z };
-            mitad = { x: -150, y: 25, z: 0 };
-            destino = { x: 20, y: 25, z: -150 };
+            mitad = { x: -150, y: 0, z: 0 };
+            destino = { x: 0, y: 0, z: -150 };
         } else {
+            //Posicionar la camara por si el usuairo se mueve pr la escena
+            that.camera.position.set(0.0,0.0, -150.0);
+            that.camera.lookAt(0,0,0);
+
             origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
-            mitad = { x: 150, y: 25, z: 0 };
-            destino = { x: 20, y: 25, z: 150 };
+            mitad = { x: 150, y: 0, z: 0 };
+            destino = { x: 0, y: 0, z: 150 };
         }
 
         let animacionCambioTurno1 = new TWEEN.Tween(origen)
@@ -156,7 +188,7 @@ class MyScene extends THREE.Scene {
             .onUpdate(function () {
                 that.camera.position.set(origen.x, origen.y, origen.z);
                 // Cambiamos a dónde mira la camara
-                that.camera.lookAt(0,25,0);
+                that.camera.lookAt(0,0,0);
             }).onComplete(function() {
                 
             });
@@ -167,7 +199,7 @@ class MyScene extends THREE.Scene {
             .onUpdate(function () {
                 that.camera.position.set(mitad.x, mitad.y, mitad.z);
                 // Cambiamos a dónde mira la camara
-                that.camera.lookAt(0,25,0);
+                that.camera.lookAt(0,0,0);
             });
 
         animacionCambioTurno1.chain(animacionCambioTurno2)
@@ -176,9 +208,9 @@ class MyScene extends THREE.Scene {
 
     cargarNombres() {
         //let person1 = //prompt("Nombre jugador 1", "");
-        this.jugadores.push(new Jugador("person1"));
+        this.jugadores.push(new Jugador("Jugador 1"));
         //let person2 = prompt("Nombre jugador 2", "");
-        this.jugadores.push(new Jugador("person2"));
+        this.jugadores.push(new Jugador("Jugador 2"));
     }
 
     createCamera() {
@@ -193,9 +225,9 @@ class MyScene extends THREE.Scene {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.add(listener);
         // También se indica dónde se coloca
-        this.camera.position.set(20, 25, 150);
+        this.camera.position.set(0, 0, 150);
         // Y hacia dónde mira
-        let look = new THREE.Vector3(0, 25, 0);
+        let look = new THREE.Vector3(0, 0, 0);
         this.camera.lookAt(look);
         this.add(this.camera);
 
@@ -489,7 +521,8 @@ class MyScene extends THREE.Scene {
                         // Miro si el jugador actual ha ganado
                         if (this.jugadores[actions.TURNO].ganador()) {
                             actions.FIN_JUEGO = true;
-                            alert('HA GANADO ' + this.jugadores[actions.TURNO].name)
+                            alert('HA GANADO ' + this.jugadores[actions.TURNO].name);
+                            this.finJuego();
                         } else {
                             // evito que salte de turno sin marcar una casilla en el correspondiente tab.
                             if (casillaMarcada) this.siguienteTurno(false);
@@ -506,6 +539,32 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    finJuego(){
+        //-----FINAL DEL JUEGO CARTEL GANADOR------------------------------------------
+
+        let posCartelGanador;
+
+        // tamaños del cartel
+        let xCartelGanador = 350.0;
+        let yCartelGanador = 80.0;
+
+        if(this.camera.position.z > 0){
+            posCartelGanador = new THREE.Vector3(this.camera.position.x, this.camera.position.y,this.camera.position.z-100.0);
+        }
+        else{
+            posCartelGanador = new THREE.Vector3(this.camera.position.x, this.camera.position.y,this.camera.position.z+100.0);
+        }
+
+        let posTextGanador = new THREE.Vector3(0-xCartelGanador/2.5, yCartelGanador/3.5,10.0);
+
+        var texto = 'Ganador  '+this.jugadores[actions.TURNO].name;
+
+        let cartelGanador = new Cartel(posCartelGanador, xCartelGanador,yCartelGanador, texto, 25.0 ,posTextGanador, Materiales.arcoiris, Materiales.negro, Materiales.blanco);
+
+        this.add(cartelGanador);
+
+    }
+
     ponerCartelTab() {
         $('#cartel').css('visibility','visible').hide().fadeIn(5000);
     }
@@ -514,17 +573,23 @@ class MyScene extends THREE.Scene {
      * Crea los tableros espejo.
      */
     empezarPartida() {
-        this._tab1 = new Tablero();
-        this._tab2 = new Tablero();
-        this._tab1.position.set(0, 0, 40)
+
+        //NUEVOS TABLEROS GRANDES
+        this._tab1 = new Tablero(this.textureCube);
+        this._tab2 = new Tablero(this.textureCube);
+        this._tab1.position.set(-30,-25, 40);
+
         this._tab2.rotation.y = Math.PI;
-        this._tab2.position.set(40, 0, -40)
-        
+        this._tab2.position.set(10, -25, -40);
+
+        //TABLEROS PEQUEÑOS
         let escalado = 0.6;
         this.tablero1.scale.set(escalado, escalado, escalado);
         this.tablero2.scale.set(escalado, escalado, escalado);
-        this.tablero1.position.set(50, 0, 40);
-        this.tablero2.position.set(50 + 24, 0, -40);
+        this.tablero1.position.set(15,-10, 40);
+        this.tablero2.position.set(35, -10, -40);
+
+
         this.add(this._tab1)
         this.add(this._tab2)
 

@@ -1,9 +1,10 @@
 import * as THREE from '../libs/three.module.js';
 import {Box} from './Box.js';
 import {Barco} from "./barcos/Barco.js";
+import {Materiales} from "./Materiales.js";
 
 export class Tablero extends THREE.Object3D {
-    constructor(tab = null) {
+    constructor(texturaReflejo = null) {
         super();
         this.FILAS = 10;
         this.COLS = 8;
@@ -42,6 +43,40 @@ export class Tablero extends THREE.Object3D {
         }
 
         this.add(this.tablero);
+
+
+        //TAPA
+        //Geometria
+
+        this.boxGeometrytapa = new THREE.BoxGeometry(this.lado*this.COLS,this.lado*this.FILAS,0.5);
+        this.boxGeometrylateral = new THREE.BoxGeometry(0.5,this.lado*this.FILAS,this.lado+3.0);
+        this.boxGeometrysuperior = new THREE.BoxGeometry(this.lado*this.COLS,0.5,0.5);
+
+        if(texturaReflejo != undefined){
+            this.materialEspejo = new THREE.MeshBasicMaterial({color: 0xffffff, envMap : texturaReflejo}) ;
+        }
+        else{
+            this.materialEspejo = Materiales.negro ;
+        }
+
+
+        let tapaTab = new THREE.Mesh(this.boxGeometrytapa, this.materialEspejo);
+        let lateralizq = new THREE.Mesh(this.boxGeometrylateral, this.materialEspejo);
+        let lateralder = new THREE.Mesh(this.boxGeometrylateral, this.materialEspejo);
+        let superior = new THREE.Mesh(this.boxGeometrysuperior, this.materialEspejo);
+
+
+        let inferior = superior;
+
+        tapaTab.position.set(this.lado*this.COLS/2,this.lado*this.FILAS/2,-this.lado/2-0.25);
+        lateralizq.position.set(-0.25,this.lado*this.FILAS/2,1.0);
+        lateralder.position.set(this.lado*this.COLS+0.25,this.lado*this.FILAS/2,1.0);
+        superior.position.set(this.lado*this.COLS/2,this.lado*this.FILAS/2,-this.lado/2-0.25);
+        inferior.position.set(this.lado*this.COLS/2,this.lado*this.FILAS/2,-this.lado/2-0.25);
+
+        this.add(tapaTab);
+        this.add(lateralder);
+        this.add(lateralizq);
 
     }
 

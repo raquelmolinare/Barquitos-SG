@@ -13,14 +13,14 @@ export class Titulo extends THREE.Object3D {
         this.fontURL = '../fonts/helve.json';
 
         let positionB = new THREE.Vector3(pos.x, pos.y, pos.z);
-        let positionA = new THREE.Vector3(pos.x + (1.1 * tamLetra), pos.y, pos.z);
-        let positionR = new THREE.Vector3(pos.x + (2.1 * tamLetra), pos.y, pos.z);
-        let positionQ = new THREE.Vector3(pos.x + (3.2 * tamLetra), pos.y, pos.z);
-        let positionU = new THREE.Vector3(pos.x + (4.3 * tamLetra), pos.y, pos.z);
-        let positionI = new THREE.Vector3(pos.x + (5.4 * tamLetra), pos.y, pos.z);
-        let positionT = new THREE.Vector3(pos.x + (6.5 * tamLetra), pos.y, pos.z);
-        let positionO = new THREE.Vector3(pos.x + (7.6 * tamLetra), pos.y, pos.z);
-        let positionS = new THREE.Vector3(pos.x + (8.7 * tamLetra), pos.y, pos.z);
+        let positionA = new THREE.Vector3(pos.x + (1 * tamLetra) + (tamLetra/10), pos.y, pos.z);
+        let positionR = new THREE.Vector3(pos.x + (2 * tamLetra) + (tamLetra/3), pos.y, pos.z);
+        let positionQ = new THREE.Vector3(pos.x + (3 * tamLetra)+ (tamLetra/2.5), pos.y, pos.z);
+        let positionU = new THREE.Vector3(pos.x + (4 * tamLetra)+ (tamLetra/1.5), pos.y, pos.z);
+        let positionI = new THREE.Vector3(pos.x + (5 * tamLetra)+ (tamLetra/1.2), pos.y, pos.z);
+        let positionT = new THREE.Vector3(pos.x + (6 * tamLetra)+ (tamLetra/2), pos.y, pos.z);
+        let positionO = new THREE.Vector3(pos.x + (7 * tamLetra)+ (tamLetra/1.7), pos.y, pos.z);
+        let positionS = new THREE.Vector3(pos.x + (8 * tamLetra)+ (tamLetra/1.2), pos.y, pos.z);
 
         this.B = new Texto(positionB, 'B', tamLetra, Materiales.Matnegro, this.fontURL);
         this.A = new Texto(positionA, 'A', tamLetra, Materiales.Matnegro, this.fontURL);
@@ -53,7 +53,6 @@ export class Titulo extends THREE.Object3D {
         let origen = {p: 0};
         let destino = {p: -tamLetra/2};
         let that = this;
-
         let animation = new TWEEN.Tween(origen)
             .to(destino, 1000)
             .onUpdate(() => {
@@ -80,6 +79,7 @@ export class Titulo extends THREE.Object3D {
             })
             .repeat(Infinity)
             .yoyo(true);
+
 
         animation.start();
         animation2.start();
