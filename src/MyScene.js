@@ -590,7 +590,7 @@ class MyScene extends THREE.Scene {
         this.tablero1.scale.set(escalado, escalado, escalado);
         this.tablero2.scale.set(escalado, escalado, escalado);
         this.tablero1.position.set(15,-10, 40);
-        this.tablero2.position.set(35, -10, -40);
+        this.tablero2.position.set(40, -10, -40);
 
 
         this.add(this._tab1)
