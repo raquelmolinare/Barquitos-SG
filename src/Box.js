@@ -2,7 +2,7 @@ import * as THREE from '../libs/three.module.js';
 import {sound} from './MyScene.js';
 import { Materiales } from "./Materiales.js";
 
-export class Box extends THREE.Scene {
+export class Box extends THREE.Object3D {
     constructor(lado, pointX, pointY, pointZ, f,c){
         super();
 

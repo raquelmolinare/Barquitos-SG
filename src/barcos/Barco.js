@@ -11,7 +11,7 @@ import * as TWEEN from '../../libs/tween.esm.js'
 import {Object3D} from "../../libs/three.module.js";
 import {Materiales} from "../Materiales.js";
 
-class Barco extends THREE.Object3D {
+export class Barco extends THREE.Object3D {
     constructor(tam,lado) {
         super();
 
@@ -89,4 +89,4 @@ class Barco extends THREE.Object3D {
 
 }
 
-export { Barco }
+
