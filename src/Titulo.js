@@ -22,15 +22,15 @@ export class Titulo extends THREE.Object3D {
         let positionO = new THREE.Vector3(pos.x + (7 * tamLetra)+ (tamLetra/1.7), pos.y, pos.z);
         let positionS = new THREE.Vector3(pos.x + (8 * tamLetra)+ (tamLetra/1.2), pos.y, pos.z);
 
-        this.B = new Texto(positionB, 'B', tamLetra, Materiales.negro, this.fontURL);
-        this.A = new Texto(positionA, 'A', tamLetra, Materiales.negro, this.fontURL);
-        this.R = new Texto(positionR, 'R', tamLetra, Materiales.negro, this.fontURL);
-        this.Q = new Texto(positionQ, 'Q', tamLetra, Materiales.negro, this.fontURL);
-        this.U = new Texto(positionU, 'U', tamLetra, Materiales.negro, this.fontURL);
-        this.I = new Texto(positionI, 'I', tamLetra, Materiales.negro, this.fontURL);
-        this.T = new Texto(positionT, 'T', tamLetra, Materiales.negro, this.fontURL);
-        this.O = new Texto(positionO, 'O', tamLetra, Materiales.negro, this.fontURL);
-        this.S = new Texto(positionS, 'S', tamLetra, Materiales.negro, this.fontURL);
+        this.B = new Texto(positionB, 'B', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.A = new Texto(positionA, 'A', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.R = new Texto(positionR, 'R', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.Q = new Texto(positionQ, 'Q', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.U = new Texto(positionU, 'U', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.I = new Texto(positionI, 'I', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.T = new Texto(positionT, 'T', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.O = new Texto(positionO, 'O', tamLetra, Materiales.arcoiris, this.fontURL);
+        this.S = new Texto(positionS, 'S', tamLetra, Materiales.arcoiris, this.fontURL);
 
 
         this.title.add(this.B)

@@ -79,7 +79,7 @@ class Barco extends THREE.Object3D {
         this.objectLoader.load( '../models/yate/modelo.obj',  ( object ) => {
             object.traverse( child => {
 
-                if ( child.material ) child.material = Materiales.arcoiris
+                if ( child.material ) child.material =  new THREE.MeshNormalMaterial({transparent: false, opacity: 1.0})
 
             });
             that.nodo.remove(that.modelo);

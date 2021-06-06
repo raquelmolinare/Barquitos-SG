@@ -210,6 +210,8 @@ class MyScene extends THREE.Scene {
         const listener = new THREE.AudioListener();
         sound = new THREE.Audio(listener);
 
+
+
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.add(listener);
         // También se indica dónde se coloca
@@ -217,6 +219,7 @@ class MyScene extends THREE.Scene {
         // Y hacia dónde mira
         let look = new THREE.Vector3(0, 0, 0);
         this.camera.lookAt(look);
+
         this.add(this.camera);
 
         // Para el control de cámara usamos una clase que ya tiene implementado los movimientos de órbita
@@ -234,14 +237,14 @@ class MyScene extends THREE.Scene {
         // El suelo es un Mesh, necesita una geometría y un material.
 
         // La geometría es una caja con muy poca altura
-        var geometryGround = new THREE.CircleGeometry(250, 100);
+        let geometryGround = new THREE.CircleGeometry(250, 100);
 
         // El material se hará con una textura de madera
-        var texture = new THREE.TextureLoader().load('../textures/ocean.png');
-        var materialGround = new THREE.MeshPhongMaterial({ map: texture });
+        let texture = new THREE.TextureLoader().load('../textures/ocean.png');
+        let materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
         // Ya se puede construir el Mesh
-        var ground = new THREE.Mesh(geometryGround, materialGround);
+        let ground = new THREE.Mesh(geometryGround, materialGround);
         ground.rotation.x = -Math.PI/2;
 
 
@@ -344,7 +347,7 @@ class MyScene extends THREE.Scene {
         this.spotLight.intensity = this.guiControls.lightIntensity;
 
         // Se muestran o no los ejes según lo que idique la GUI
-        this.axis.visible = this.guiControls.axisOnOff;
+        this.axis.visible = false;
 
         // Se actualiza la posición de la cámara según su controlador
         this.cameraControl.update();
@@ -511,7 +514,7 @@ class MyScene extends THREE.Scene {
                         // Miro si el jugador actual ha ganado
                         if (this.jugadores[actions.TURNO].ganador()) {
                             actions.FIN_JUEGO = true;
-                            alert('HA GANADO ' + this.jugadores[actions.TURNO].name);
+                            //alert('HA GANADO ' + this.jugadores[actions.TURNO].name);
                             this.finJuego();
                         } else {
                             // evito que salte de turno sin marcar una casilla en el correspondiente tab.
@@ -545,7 +548,7 @@ class MyScene extends THREE.Scene {
             posCartelGanador = new THREE.Vector3(this.camera.position.x, this.camera.position.y,this.camera.position.z+100.0);
         }
 
-        let posTextGanador = new THREE.Vector3(0-xCartelGanador/2.5, yCartelGanador/3.5,10.0);
+        let posTextGanador = new THREE.Vector3(0-xCartelGanador/2.5 - 15, yCartelGanador/3.5,10.0);
 
         let texto = 'Ganador  '+this.jugadores[actions.TURNO].name;
 
@@ -583,7 +586,8 @@ class MyScene extends THREE.Scene {
         this.tablero1.position.set(15,-10, 40);
         this.tablero2.position.set(40, -10, -40);
 
-
+        console.log(this.tablero1.position);
+        console.log(this.tablero2.position);
         this.add(this._tab1)
         this.add(this._tab2)
 
@@ -698,6 +702,10 @@ class MyScene extends THREE.Scene {
         }
     }
 
+    /**
+     * Hacer zoom si se pulsa ctrl
+     * @param event
+     */
     onMouseWheel(event) {
         if (event.ctrlKey) {
             // The Trackballcontrol only works if Ctrl key is pressed
@@ -708,8 +716,36 @@ class MyScene extends THREE.Scene {
     }
 
     onKeyDown(event) {
-        var x = event.which || event.keyCode;
+        let x = event.which || event.keyCode;
+        let aux;
         switch (x) {
+            case 49: // tecla 1
+                aux = actions.TURNO == 0 ? 150 : -150;
+                this.camera.position.set(0, -20, aux);
+                this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+                break;
+            case 50: // tecla 2
+                this.camera.position.set(0, 300, 0);
+                this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+                break;
+            case 51: // tecla 3
+                if(actions.TURNO == 0) {
+                    this.camera.position.set(25, 0, 100);
+                    this.camera.lookAt(new THREE.Vector3(15, -10, 40));
+                } else {
+                    this.camera.position.set(25, 0, -100);
+                    this.camera.lookAt(new THREE.Vector3(40, -10, -40));
+                }
+                break;
+            case 52: // tecla 4
+                if(actions.TURNO == 0) {
+                    this.camera.position.set(40.217, 0, 82.907);
+                    this.camera.lookAt(new THREE.Vector3(15, -10, 40));
+                } else {
+                    this.camera.position.set(40.217, -35.66, -82.907);
+                    this.camera.lookAt(new THREE.Vector3(40, -10, -40));
+                }
+                break;
             case 17: // Ctrl key
                 this.getCameraControls().enabled = true;
                 break;

@@ -14,21 +14,24 @@
             margin: 0;
             overflow: hidden; 
         }
-        #cartel {
+        .cart {
             position: absolute;
             left: 100px;
             top: 20px;
             padding: 10px;
             background-color: #bbff99;
             border: 1px solid #44cc00;
-            font-size: 2em;
+            font-size: 1.8em;
             font-family: "Ubuntu Mono";
         }
     </style>
 </head>
 <body>
-<div id="cartel" style="visibility:hidden">
+<div class="cart" id="cartel" style="visibility:hidden; top: 3em">
     Tecla 'tab': girar barco
+</div>
+<div class="cart">
+    Teclas 1,2,3: cambiar cámara
 </div>
 <!-- Div which will hold the Output -->
 <div id="WebGL-output">
