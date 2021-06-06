@@ -37,13 +37,12 @@ class MyScene extends THREE.Scene {
         this.gui = this.createGUI();
 
         // Construimos los distinos elementos que tendremos en la escena
-        //this.createGround();
-        // Todo elemento que se desee sea tenido en cuenta en el renderizado de la escena debe pertenecer a esta. Bien como hijo de la escena (this en esta clase) o como hijo de un elemento que ya esté en la escena.
-        // Tras crear cada elemento se añadirá a la escena con   this.add(variable)
         this.createLights();
 
         // Tendremos una cámara con un control de movimiento con el ratón
         this.createCamera();
+
+        this.createGround();
 
         // Y unos ejes. Imprescindibles para orientarnos sobre dónde están las cosas
         this.axis = new THREE.AxesHelper(15);
@@ -52,8 +51,9 @@ class MyScene extends THREE.Scene {
         this.cargarNombres()
 
         //----ESCENA--------
-        var path = "../textures/cube/";
-        var format = '.png';
+
+        var path = "../textures/sky/";
+        var format = '.jpg';
         var urls = [
             path+'px'+format,path+'nx'+format,
             path+'py'+format,path+'ny'+format,
@@ -64,10 +64,10 @@ class MyScene extends THREE.Scene {
 
         this.background = this.textureCube;
 
-        /*
+    /*
         const scene = new THREE.Scene();
         scene.background = new THREE.CubeTextureLoader()
-            .setPath( '../textures/cubeMaps/' )
+            .setPath( '../textures/cube/' )
             .load( [
                 'px.png',
                 'nx.png',
@@ -75,7 +75,8 @@ class MyScene extends THREE.Scene {
                 'ny.png',
                 'pz.png',
                 'nz.png'
-            ] );*/
+            ] );
+        */
 
         //-----PANTALLA INICIO------------------------------------------------
         this.pagInicio = new Inicio();
@@ -152,7 +153,7 @@ class MyScene extends THREE.Scene {
             }
         }
         actions.SIG_TURNO == 0 ? actions.SIG_TURNO = 1 : actions.SIG_TURNO = 0;
-        
+
     }
 
     moverCamaraTurno() {
@@ -166,20 +167,20 @@ class MyScene extends THREE.Scene {
         if (actions.TURNO == 0) {
 
             //Posicionar la camara por si el usuairo se mueve pr la escena
-            that.camera.position.set(0.0,0.0, 150.0);
+            that.camera.position.set(0.0,-20, 150.0);
             that.camera.lookAt(0,0,0);
 
             origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z };
-            mitad = { x: -150, y: 0, z: 0 };
-            destino = { x: 0, y: 0, z: -150 };
+            mitad = { x: -150, y: -20, z: 0 };
+            destino = { x: 0, y: -20, z: -150 };
         } else {
             //Posicionar la camara por si el usuairo se mueve pr la escena
-            that.camera.position.set(0.0,0.0, -150.0);
+            that.camera.position.set(0.0,-20, -150.0);
             that.camera.lookAt(0,0,0);
 
             origen = { x: this.camera.position.x, y: this.camera.position.y, z: this.camera.position.z};
-            mitad = { x: 150, y: 0, z: 0 };
-            destino = { x: 0, y: 0, z: 150 };
+            mitad = { x: 150, y: -20, z: 0 };
+            destino = { x: 0, y: -20, z: 150 };
         }
 
         let animacionCambioTurno1 = new TWEEN.Tween(origen)
@@ -225,7 +226,7 @@ class MyScene extends THREE.Scene {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.add(listener);
         // También se indica dónde se coloca
-        this.camera.position.set(0, 0, 150);
+        this.camera.position.set(0, -20, 150);
         // Y hacia dónde mira
         let look = new THREE.Vector3(0, 0, 0);
         this.camera.lookAt(look);
@@ -246,18 +247,20 @@ class MyScene extends THREE.Scene {
         // El suelo es un Mesh, necesita una geometría y un material.
 
         // La geometría es una caja con muy poca altura
-        var geometryGround = new THREE.BoxGeometry(50, 0.2, 50);
+        var geometryGround = new THREE.CircleGeometry(250, 100);
 
         // El material se hará con una textura de madera
-        var texture = new THREE.TextureLoader().load('../imgs/wood.jpg');
+        var texture = new THREE.TextureLoader().load('../textures/ocean.png');
         var materialGround = new THREE.MeshPhongMaterial({ map: texture });
 
         // Ya se puede construir el Mesh
         var ground = new THREE.Mesh(geometryGround, materialGround);
+        ground.rotation.x = -Math.PI/2;
+
 
         // Todas las figuras se crean centradas en el origen.
         // El suelo lo bajamos la mitad de su altura para que el origen del mundo se quede en su lado superior
-        ground.position.y = -0.1;
+        ground.position.y = -50.0;
 
         // Que no se nos olvide añadirlo a la escena, que en este caso es  this
         this.add(ground);
@@ -290,7 +293,7 @@ class MyScene extends THREE.Scene {
         // La luz ambiental solo tiene un color y una intensidad
         // Se declara como   var   y va a ser una variable local a este método
         //    se hace así puesto que no va a ser accedida desde otros métodos
-        var ambientLight = new THREE.AmbientLight(0xccddee, 0.35);
+        var ambientLight = new THREE.AmbientLight(0xccddee, 0.500);
         // La añadimos a la escena
         this.add(ambientLight);
 
@@ -299,7 +302,7 @@ class MyScene extends THREE.Scene {
         // Si no se le da punto de mira, apuntará al (0,0,0) en coordenadas del mundo
         // En este caso se declara como   this.atributo   para que sea un atributo accesible desde otros métodos.
         this.spotLight = new THREE.SpotLight(0xffffff, this.guiControls.lightIntensity);
-        this.spotLight.position.set(60, 60, 40);
+        this.spotLight.position.set(0, 50, 0);
         this.add(this.spotLight);
     }
 

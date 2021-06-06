@@ -59,6 +59,9 @@ export class Tablero extends THREE.Object3D {
             this.materialEspejo = Materiales.negro ;
         }
 
+        //var texture = new THREE.TextureLoader().load('../textures/oceanMap/ocean.png');
+        //var materialGround = new THREE.MeshPhongMaterial ({map: texture});
+
 
         let tapaTab = new THREE.Mesh(this.boxGeometrytapa, this.materialEspejo);
         let lateralizq = new THREE.Mesh(this.boxGeometrylateral, this.materialEspejo);
