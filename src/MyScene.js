@@ -171,7 +171,7 @@ class MyScene extends THREE.Scene {
         }
 
         let animacionCambioTurno1 = new TWEEN.Tween(origen)
-            .to(mitad, 3000)
+            .to(mitad, 1000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(origen.x, origen.y, origen.z);
@@ -182,7 +182,7 @@ class MyScene extends THREE.Scene {
             });
 
         let animacionCambioTurno2 = new TWEEN.Tween(mitad)
-            .to(destino, 3000)
+            .to(destino, 1000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(mitad.x, mitad.y, mitad.z);
@@ -535,27 +535,24 @@ class MyScene extends THREE.Scene {
     finJuego(){
         //-----FINAL DEL JUEGO CARTEL GANADOR------------------------------------------
 
-        let posCartelGanador;
 
         // tamaños del cartel
         let xCartelGanador = 350.0;
         let yCartelGanador = 80.0;
 
-        if(this.camera.position.z > 0){
-            posCartelGanador = new THREE.Vector3(this.camera.position.x, this.camera.position.y,this.camera.position.z-100.0);
-        }
-        else{
-            posCartelGanador = new THREE.Vector3(this.camera.position.x, this.camera.position.y,this.camera.position.z+100.0);
-        }
-
+        let posCartelGanador = new THREE.Vector3(0,0,0);
         let posTextGanador = new THREE.Vector3(0-xCartelGanador/2.5 - 15, yCartelGanador/3.5,10.0);
 
         let texto = 'Ganador  '+this.jugadores[actions.TURNO].name;
 
         let cartelGanador = new Cartel(posCartelGanador, xCartelGanador,yCartelGanador, texto, 25.0 ,posTextGanador, Materiales.arcoiris, Materiales.negro, Materiales.blanco);
 
-        if(this.camera.position.z < 0){
+        if(actions.TURNO === 0){
+            cartelGanador.position.z = 50.0;
+        }
+        else{
             cartelGanador.rotation.y = Math.PI ;
+            cartelGanador.position.z = -50.0;
         }
 
         this.add(cartelGanador);
