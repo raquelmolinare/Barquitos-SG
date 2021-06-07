@@ -52,9 +52,9 @@ class MyScene extends THREE.Scene {
 
         //----ESCENA--------
 
-        var path = "../textures/sky/";
-        var format = '.jpg';
-        var urls = [
+        let path = "../textures/sky/";
+        let format = '.jpg';
+        let urls = [
             path+'px'+format,path+'nx'+format,
             path+'py'+format,path+'ny'+format,
             path+'pz'+format,path+'nz'+format
