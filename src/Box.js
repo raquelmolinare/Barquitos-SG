@@ -160,6 +160,11 @@ export class Box extends THREE.Object3D {
         this.matDefinitivo.transparent = Materiales.alrededor.transparent;
     }
 
+    marcarCasillasHundido(){
+        this.boxMesh.material = Materiales.negroTransparente;
+        this.matDefinitivo = Materiales.negroTransparente;
+    }
+
     update() {
 
     }

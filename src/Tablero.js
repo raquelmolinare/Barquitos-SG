@@ -113,20 +113,17 @@ export class Tablero extends THREE.Object3D {
             if(c == 0 ){ //Si esta junto al borde izquierdo
 
                 for(let i = c; i < c+n+1; i++) {
-                   // console.log("marcando casilla ("+(f-1)+","+i+") como alrededor");
                     this.boxesArray[((f-1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
 
             }
             else if(c+n-1 == this.COLS-1 ){  //Si esta junto al borde derecho
                 for(let i = c-1; i < c+n; i++) {
-                    //console.log("marcando casilla ("+(f-1)+","+i+") como alrededor");
                     this.boxesArray[((f-1) * this.COLS) + i].marcarCasillaAlrededor();
                 }
             }
             else{ //En caso contrario
                 for(let i = c-1; i < c+n+1; i++) {
-                    //console.log("marcando casilla ("+(f-1)+","+i+") como alrededor");
                     this.boxesArray[((f-1) * this.COLS) + i].marcarCasillaAlrededor();;
                 }
             }
@@ -415,24 +412,28 @@ export class Tablero extends THREE.Object3D {
     }
 
     _hundirBarco(barco) {
-        console.log('LLAMO A HUNDIR BARCO')
         this.barcos[barco - 2].hundir();
     }
 
     shoot(f, c) {
         let salida = {
             tocado: false,
-            hundido: false
+            hundido: false,
+            casillas: []
         };
         if(!this.boxesArray[f * this.COLS + c].disparado) {
             salida.tocado = this.boxesArray[f * this.COLS + c].shoot();
-            let barco = this.boxesArray[f * this.COLS + c].barcoContenido;
+            var barco = this.boxesArray[f * this.COLS + c].barcoContenido;
             if(barco != null) {
                 if(this._comprobarHundido(barco)) {
                     this._hundirBarco(barco);
                     salida.hundido = true;
                 }
             }
+        }
+
+        if(salida.hundido){
+            salida.casillas = this.getCasillasHundido(barco);
         }
         return salida;
     }
@@ -444,19 +445,29 @@ export class Tablero extends THREE.Object3D {
         }
     }
 
+    getCasillasHundido(barco){
+        let result = [];
+        for (let i = 0; i < this.boxesArray.length; i++) {
+            if(this.boxesArray[i].barcoContenido === barco){
+                result.push({f: this.boxesArray[i].fila, c: this.boxesArray[i].columna});
+            }
+        }
 
-
-    /**
-     * It returns the position of the mouse in normalized coordinates ([-1,1],[-1,1])
-     * @param event - Mouse information
-     * @return A Vector2 with the normalized mouse position
-     */
-    getMouse(event) {
-        var mouse = new THREE.Vector2 ();
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = 1 - 2 * (event.clientY / window.innerHeight);
-        return mouse;
+        return result;
     }
+
+    marcarCasillasHundido(casillas){
+
+        for (let i = 0; i < casillas.length; i++) {
+            for (let j = 0; j < this.boxesArray.length; j++) {
+                if((this.boxesArray[j].fila === casillas[i].f) && (this.boxesArray[j].columna === casillas[i].c)){
+                    this.boxesArray[j].marcarCasillasHundido();
+                }
+            }
+        }
+
+    }
+
 
     update() {
 

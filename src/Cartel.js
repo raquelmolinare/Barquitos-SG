@@ -9,11 +9,6 @@ export class Cartel extends THREE.Object3D {
 
         this._over = false;
 
-        //this.pos = pos;
-        //this.sizeX = sizeX;
-        //this.sizeY = sizeY;
-        //this.text = text;
-
         this.materialExterior = materialExterior;
         this.materialInterior= materialInterior;
         this.materialTexto = materialTexto;
@@ -21,7 +16,6 @@ export class Cartel extends THREE.Object3D {
         this.cartelObj = new THREE.Object3D();
 
         let positionExterna = new THREE.Vector3(-sizeX/2,0,0);
-        console.log("cartel x :"+sizeX);
         let formaExterna  = new FormaOvalada(positionExterna, sizeX, sizeY, sizeY/5, 1.5, materialExterior);
 
         formaExterna.userData = this;

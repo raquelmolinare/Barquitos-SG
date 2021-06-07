@@ -150,7 +150,7 @@ class MyScene extends THREE.Scene {
         let origen;
         let mitad;
         let destino;
-        console.log(actions.TURNO);
+       //console.log(actions.TURNO);
         if (actions.TURNO == 0) {
 
             //Posicionar la camara por si el usuairo se mueve pr la escena
@@ -171,7 +171,7 @@ class MyScene extends THREE.Scene {
         }
 
         let animacionCambioTurno1 = new TWEEN.Tween(origen)
-            .to(mitad, 1000)
+            .to(mitad, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(origen.x, origen.y, origen.z);
@@ -182,7 +182,7 @@ class MyScene extends THREE.Scene {
             });
 
         let animacionCambioTurno2 = new TWEEN.Tween(mitad)
-            .to(destino, 1000)
+            .to(destino, 3000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .onUpdate(function () {
                 that.camera.position.set(mitad.x, mitad.y, mitad.z);
@@ -261,19 +261,19 @@ class MyScene extends THREE.Scene {
 
         this.guiControls = new function () {
             this.lightIntensity = 0.5;
-            this.axisOnOff = true;
+            //this.axisOnOff = true;
         }
 
         var that = this;
 
         // Se crea una sección para los controles de esta clase
-        var folder = gui.addFolder('Luz y Ejes');
+        var folder = gui.addFolder('Luz');
 
         // Se le añade un control para la intensidad de la luz
         folder.add(this.guiControls, 'lightIntensity', 0, 1, 0.1).name('Intensidad de la Luz : ');
 
         // Y otro para mostrar u ocultar los ejes
-        folder.add(this.guiControls, 'axisOnOff').name('Mostrar ejes : ');
+        //folder.add(this.guiControls, 'axisOnOff').name('Mostrar ejes : ');
 
         return gui;
     }
@@ -497,13 +497,18 @@ class MyScene extends THREE.Scene {
                                     this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                                     this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
                                     // comprueba si se ha hundido,
-                                    let rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
+                                    var rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
 
                                     if (rtado.tocado) {
                                         casillaMarcada = this.foundBox.shootTocado();
                                         this.jugadores[actions.TURNO].barcoTocado();
                                     } else {
                                         casillaMarcada = this.foundBox.shootAgua();
+                                    }
+
+                                    if(rtado.hundido){
+                                        $('#hundido').css('visibility','visible').hide().fadeIn(1000).fadeOut(3000);
+                                        this.tableroEspejo.marcarCasillasHundido(rtado.casillas);
                                     }
 
                                     parar = true;
@@ -518,7 +523,7 @@ class MyScene extends THREE.Scene {
                             this.finJuego();
                         } else {
                             // evito que salte de turno sin marcar una casilla en el correspondiente tab.
-                            if (casillaMarcada) this.siguienteTurno(false);
+                            if (casillaMarcada && !rtado.tocado) this.siguienteTurno(false);
                         }
                     }
 
@@ -560,8 +565,10 @@ class MyScene extends THREE.Scene {
     }
 
     ponerCartelTab() {
-        $('#cartel').css('visibility','visible').hide().fadeIn(5000);
+        $('#cartel').css('visibility','visible').hide().fadeIn(4000);
     }
+
+
 
     /**
      * Crea los tableros espejo.
@@ -583,8 +590,8 @@ class MyScene extends THREE.Scene {
         this.tablero1.position.set(15,-10, 40);
         this.tablero2.position.set(40, -10, -40);
 
-        console.log(this.tablero1.position);
-        console.log(this.tablero2.position);
+       //console.log(this.tablero1.position);
+       //console.log(this.tablero2.position);
         this.add(this._tab1)
         this.add(this._tab2)
 

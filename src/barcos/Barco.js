@@ -28,11 +28,7 @@ export class Barco extends THREE.Object3D {
                 that.objectLoader.setMaterials(materials);
                 that.objectLoader.load( '../models/yate/modelo.obj',
                     function(object){
-                        /*object.traverse( child => {
 
-                            if ( child.material ) child.material =new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})
-
-                        });*/
                         modelo = object;
                         that.nodo.add(modelo);
                     },null,null
@@ -79,7 +75,7 @@ export class Barco extends THREE.Object3D {
         this.objectLoader.load( '../models/yate/modelo.obj',  ( object ) => {
             object.traverse( child => {
 
-                if ( child.material ) child.material =  new THREE.MeshNormalMaterial({transparent: false, opacity: 1.0})
+                if ( child.material ) child.material =  new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})
 
             });
             that.nodo.remove(that.modelo);
