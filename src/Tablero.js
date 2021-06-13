@@ -30,13 +30,11 @@ export class Tablero extends THREE.Object3D {
 
 
         //TAPA
-        //Geometria
-
         this.boxGeometrytapa = new THREE.BoxGeometry(this.lado*this.COLS,this.lado*this.FILAS,0.5);
         this.boxGeometrylateral = new THREE.BoxGeometry(0.5,this.lado*this.FILAS,this.lado+3.0);
         this.boxGeometryinferior = new THREE.BoxGeometry(this.lado*this.COLS+1.0,0.5,this.lado+3.0);
 
-        if(texturaReflejo != null){
+        if(texturaReflejo != null){ // por si acaso se crea sin textura en el constructor
             this.materialEspejo = new THREE.MeshBasicMaterial({color: 0xffffff, envMap : texturaReflejo}) ;
         }
         else{
@@ -79,7 +77,7 @@ export class Tablero extends THREE.Object3D {
     marcarCasillasAlrededorX(f, c, n){
 
         //console.log("------Para ("+(f)+","+(c)+") --------");
-
+        // Recorro fila superor, inferior, adelante y atrás
         //En la fila superior
         if( f < this.FILAS-1 ){
 
@@ -210,12 +208,12 @@ export class Tablero extends THREE.Object3D {
     }
 
     overXNewShip(f, c, n){
-        //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
+        //(fila a la qua ocupada por los barcos.e se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
 
         var wrong = false;
 
         //1.Mirar si se salen del tablero
-        if(c+n > this.COLS ){  //Si se sale del tablero
+        if(c+n > this.COLS ){  //Si se sale del tablero, todas a rojo
             for(let i = 0; i < this.COLS-c; i++) {
                 this.boxesArray[(f * this.COLS) + c + i].overWrong();
             }
@@ -246,7 +244,7 @@ export class Tablero extends THREE.Object3D {
      * la ocupada por los barcos.
      * @param f fila
      * @param c columna
-     * @param n ocupación de cuadros.
+     * @param n tamaño de boxes que ocupa el barco.
      */
     resetOverX(f,c,n=1){
         for (let i = 0; i < this.boxesArray.length; i++) {
@@ -321,6 +319,7 @@ export class Tablero extends THREE.Object3D {
         }
     }
 
+    // arhoa los select click-------------------------------------------------------------------------------------------
 
     selectXNewShip(f, c, n) {
         //(fila a la que se quiere acceder * número de columnas de la matriz ) + columna a la que se quiere acceder
@@ -342,7 +341,7 @@ export class Tablero extends THREE.Object3D {
             }
         }
 
-        //3. Mirar si se salen del tablero y si no seleccionar
+        //3. Mirar si se salen del tablero y si no está ya seleccionada seleccionar
         if( seleccionables ){
             for(let i = 0; i < n; i++) {
                 this.boxesArray[(f * this.COLS) + c + i].posicionarBarco(n);
@@ -350,7 +349,7 @@ export class Tablero extends THREE.Object3D {
             //Se marcan las casillas de alrededor
             this.marcarCasillasAlrededorX(f, c, n);
 
-            //Se posiciona el barco
+            //SE POSICIONA EL BARCO <-----------------------
             this.barcos[n - 2].position.x += c * this.lado;
             this.barcos[n - 2].position.y += f * this.lado;
             this.add(this.barcos[n - 2]);
@@ -373,6 +372,7 @@ export class Tablero extends THREE.Object3D {
         //2.Mirar si ya están seleccionadas
         for(let i = 0; i < n && seleccionables; i++) {
             //console.log("compruebo: f="+f+i+" c="+c)
+            // Si ya tienen barco o alrededor, no es una opción
             if( this.boxesArray[( (f+i) * this.COLS) + c].tieneBarco || this.boxesArray[( (f+i) * this.COLS) + c].tieneBarcoAlrededor ){
                 seleccionables=false;
                 //console.log("no se puede: f="+(f+i)+" c="+c)
@@ -415,21 +415,27 @@ export class Tablero extends THREE.Object3D {
         this.barcos[barco - 2].hundir();
     }
 
+    /**
+     * Se invoca sobre el tablero original.
+     */
     shoot(f, c) {
         let salida = {
             tocado: false,
             hundido: false,
-            casillas: []
+            casillas: []    // obtenemos las casillas del tablero a hundir [pair<f, c>]
         };
         if(!this.boxesArray[f * this.COLS + c].disparado) {
             salida.tocado = this.boxesArray[f * this.COLS + c].shoot();
             var barco = this.boxesArray[f * this.COLS + c].barcoContenido;
+            this._hundirBarco(barco);
+            salida.hundido = true;
+            /*
             if(barco != null) {
                 if(this._comprobarHundido(barco)) {
                     this._hundirBarco(barco);
                     salida.hundido = true;
                 }
-            }
+            }*/
         }
 
         if(salida.hundido){

@@ -38,7 +38,7 @@ export class Barco extends THREE.Object3D {
 
         this.nodo.rotation.x = Math.PI / 2;
 
-        switch (tam){
+        switch (tam) {
             case 2:
                 this.nodo.scale.set(1.5,2.5,3.0);
                 this.nodo.position.x = 4.2;
@@ -73,6 +73,8 @@ export class Barco extends THREE.Object3D {
         let that = this;
 
         this.objectLoader.load( '../models/yate/modelo.obj',  ( object ) => {
+            // recorre al reves los hijos del grafo de la escena y actualiza los
+            // materiales...
             object.traverse( child => {
 
                 if ( child.material ) child.material =  new THREE.MeshNormalMaterial({transparent: true, opacity: 1.0})

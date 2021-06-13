@@ -453,14 +453,14 @@ class MyScene extends THREE.Scene {
                                         this.jugadores[actions.TURNO].barcoColocado();
                                     }
                                 }
-                                parar = true;
+                                parar = true; // pa optimizar
                             }
                         }
                     }
 
                     if (this.jugadores[0].terminadaColocacion() && this.jugadores[1].terminadaColocacion()) {
                         $('#cartel').css('visibility','hidden').hide().fadeOut(5000);
-                        this.empezarPartida();
+                        this.empezarPartida(); // crea y posiciona tableros espejos
                     } else if (this.jugadores[actions.TURNO].terminadaColocacion()) {
                         this.siguienteTurno();
                     }
@@ -497,10 +497,10 @@ class MyScene extends THREE.Scene {
                                     this.tableroEspejo.boxesArray[i].getPosition().z == this.selectedObject.position.z) {
                                     this.foundBox = this.tableroEspejo.boxesArray[i];  //Hemos encontrado la caja
                                     // comprueba si se ha hundido,
-                                    var rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna)
+                                    var rtado = this.tablero.shoot(this.foundBox.fila, this.foundBox.columna);
 
                                     if (rtado.tocado) {
-                                        casillaMarcada = this.foundBox.shootTocado();
+                                        casillaMarcada = this.foundBox.shootTocado(); // founBox es tablero espejo
                                         this.jugadores[actions.TURNO].barcoTocado();
                                     } else {
                                         casillaMarcada = this.foundBox.shootAgua();
@@ -691,6 +691,7 @@ class MyScene extends THREE.Scene {
 
                                 this.foundBox.over();
                                 // como tam=1 se puede usar X
+                                // reset del resto que ya no esoy over
                                 this.tableroEspejo.resetOverX(this.foundBox.fila, this.foundBox.columna, 1);
 
 

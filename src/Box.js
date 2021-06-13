@@ -15,8 +15,8 @@ export class Box extends THREE.Object3D {
         this.fila=f;
         this.columna=c;
         this.disparado = false;
-        this.barcoContenido = null;
-        this.matDefinitivo =  Materiales.default;
+        this.barcoContenido = null; //integer
+        this.matDefinitivo =  Materiales.default; // para evitar el reset
 
         this.boxMesh = new THREE.Mesh(this.boxGeometry, Materiales.default);
         this.boxMesh.position.x = pointX;
@@ -36,6 +36,10 @@ export class Box extends THREE.Object3D {
         return this.boxMesh.position;
     }
 
+    /**
+     * Dispara a una caja, es invocado desde el tablero original (no fake)
+     * @returns si tiene barco para saber si ha sido tocado el barco.
+     */
     shoot() {
         if(!this.disparado) {
             this.boxMesh.material = Materiales.negro;
@@ -47,7 +51,7 @@ export class Box extends THREE.Object3D {
     }
 
     /**
-     *
+     * (invocado en el tablero espejo)
      * @returns devuelve si se ha ejecutado el interior del método.
      * Útil para cambiar de turno.
      */
@@ -93,11 +97,14 @@ export class Box extends THREE.Object3D {
         }
         return false;
     }
-
+/*
     rotateBox(event){
         this.boxMesh.rotation.y += (event.wheelDelta ? event.wheelDelta/20 : -event.detail);
-    }
+    }*/
 
+    /**
+     *
+     */
     resetMaterial() {
         this.boxMesh.material = this.matDefinitivo;
         this.boxMesh.material.opacity = this.matDefinitivo.opacity;
@@ -105,7 +112,8 @@ export class Box extends THREE.Object3D {
     }
 
     /**
-     * Posiciona y almacena el barco que posee la casilla
+     * Cambia los materiales al definitivo para indicar que hay barco
+     * y almacena el barco que posee la casilla. NO POSICIONA DIRECTAMENTE EL BARCO
      * @param barco tamaño del barco (num. casillas que ocupa).
      */
     posicionarBarco(barco) {
@@ -122,7 +130,7 @@ export class Box extends THREE.Object3D {
     deselect() {
         this.boxMesh.material = Materiales.default;
         this.boxMesh.material.opacity = Materiales.default.opacity;
-        this.tieneBarco = false;
+        this.tieneBarco = false; // desde que hay material definitivo no hace falta
         this.boxMesh.material.transparent =  Materiales.default.transparent;
     }
 
