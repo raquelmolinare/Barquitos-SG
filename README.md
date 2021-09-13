@@ -1,6 +1,9 @@
-# Barquitos-SG
-Repositorio del proyecto basado en el juego de los barquitos para la asignatura Sistemas Gráficos
+# Barquitos SG
+Repositorio del proyecto basado en el juego de los barquitos realizado para la asignatura Sistemas Gráficos.
 
-2 tableros en pantallas con un foco cada uno.
+📹 [video jugando](https://www.youtube.com/watch?v=AycP3t2ZC4k)
+ 
 
-TABLERO: 
+## Autores
+* 👩🏻‍💻 [Raquel Molina Reche](https://github.com/rmr00)
+* 👨🏻‍💻 [Pablo Jiménez Jiménez](https://github.com/pablojj1808)
